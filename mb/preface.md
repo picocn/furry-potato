@@ -102,6 +102,35 @@ Sebastopol, CA 95472
 
 书籍成稿后，经过了几轮的技术审阅。感谢克里克特.刘贺罗恩.兰特兹对文稿的周密审阅，评论和支持。
 
-几个比特币开发者贡献了代码示例，审阅，评论和鼓励。感谢阿米.塔基的代码示例和很多很好的评论；维塔利科.布特林和理查德.基斯帮忙椭圆曲线算法和代码共享；盖文.安德森的勘正，评论和鼓励；感谢米查里斯.卡嘎基斯的评论，贡献和btcd编写。
+几个比特币开发者贡献了代码示例，审阅，评论和鼓励。感谢阿米.塔基的代码示例和很多很好的评论；维塔利科.布特林和理查德.基斯帮忙椭圆曲线算法和代码共享；盖文.安德森的勘正，评论和鼓励；感谢米查里斯.卡嘎基斯的评论，贡献和btcd的编写。
 
+我想把我的爱和本书献给我的母亲特丽莎，她在一所所有墙都摆满书的房子里把我抚养成人。她在1982年就给我买了第一台电脑，即使她自认为是个技术恐惧症患者。我的父亲门内劳斯，一个土木工程师，刚刚在他80岁高龄出版了第一本书，是他教会我逻辑和分析思维，并使我热爱上科学和工程。
+
+感谢所有支持我经历了这段历程的所有朋友！
+
+##早期版本（Github贡献）
+
+非常多的贡献者在Github上对早期版本提供了很好的评论，纠正以及其他的帮助。感谢你们对本书做的所有贡献，以下是一个做出显著贡献者的列表，括号中是他们的Github ID：
+- Minh T. Nguyen, GitHub contribution editor (enderminh)
+- Ed Eykholt (edeykholt)
+- Michalis Kargakis (kargakis)
+- Erik Wahlström (erikwam)
+- Richard Kiss (richardkiss)
+- Eric Winchell (winchell)
+- Sergej Kotliar (ziggamon)
+- Nagaraj Hubli (nagarajhubli)
+- ethers
+- Alex Waters (alexwaters)
+- Mihail Russu (MihailRussu)
+- Ish Ot Jr. (ishotjr)
+- James Addison (jayaddison)
+- Nekomata (nekomata-3)
+- Simon de la Rouviere (simondlr)
+- Chapman Shoop (belovachap)
+- Holger Schinzel (schinzelh)
+- effectsToCause (vericoin)
+- Stephan Oeste (Emzy)
+- Joe Bauers (joebauers)
+- Jason Bisterfeldt (jbisterfeldt)
+- Ed Leafe (EdLeafe)
 
