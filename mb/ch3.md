@@ -1,3 +1,86 @@
+第三章 比特币客户端
+======
+
+##比特币核心：参考实现
+
+你可以从[http://bitcoin.org](http://bitcoin.org "bitcoin.org")下载参考客户端*比特币核心*，就是所谓的中本聪客户端。这个客户端参考实现了比特币系统的所有功能，包括钱包，全部交易账本（区块链）的全量副本的交易验证引擎，点对点比特币网络的完全网络节点。
+
+在[Bitcoin.org](http://bitcoin.org)网站的“选择你的钱包”页面，选择“比特币核心”来下载参考客户端。基于你的操作系统，你可以下载到可执行安装包。对于Windows系统，有zip压缩包或者.exe可执行程序可供下载。对于MacOS，是一个.dmg磁盘映像。对于Linux版本，包括Ubuntu系统的PPA包，或者tar.gz档案。[Bitcoin.org](http://bitcoin.org)网页中列出的建议客户端见图3-1。
+
+![figure3-1](fig3-1.png)
+
+###首次运行比特币核心
+
+如果你已经下载了安装包，比如.exe，.dmg或者PPA，你可以像在你的操作系统上安装其他任何软件一样安装它。对于Windows，运行.exe，并根据提示一步步进行安装。对于MacOS，运行.dmg，完成后将Bitcoin-QT图标拉到*应用*文件夹。对于Ubuntu，在文件浏览器中双击PPA，系统将会打开软件包管理器，以进行软件包的安装。一旦安装完成，你将在应用列表中看到一个新的叫做Bitcoin-Qt的软件。双击图标可以启动比特币客户端。
+
+首次运行比特币核心，它将开始下载区块链，这个过程可能需要持续几天（参看图3-2）。让它在后台运行，直到显示“同步完成”，并且余额栏不再显示“未同步”。
+
+![figure3-2](fig3-2.png)
+
+*比特币核心在区块链初始化时的屏幕显示*
+
+![notes](notes.png)比特币核心保留一份交易账本（区块链）的全量副本，这个副本包含了了自2009年创立以来在比特币网络上发生过的所有交易。数据集大小约有几十G字节（在2013年末大概是16GB），会在几天内逐步下载完成。直到全量的区块链数据集下载完成，客户端没法执行交易或者更新账户余额。这段时间内，客户端会在账户余额边上显示“未同步”，在下方状态栏显示“正在同步”。为了完成初始化同步，请确保你有充足的硬盘空间、网络带宽和足够的时间。
+
+
+###从源代码编译比特币核心
+对于开发者来说，也有个选项可以下载全量的源码（ZIP压缩包）或者从GitHub的官方源码库中克隆代码。在Github的bitcoin页面，从边栏选择下载ZIP包。或者，使用git命令行创建一个本地代码库，并从github下载一份副本。在下面的例子中，我们使用类Unix系统（linux，MacOS等）的命令行从github上克隆代码。
+
+	$ git clone https://github.com/bitcoin/bitcoin.git
+	Cloning into 'bitcoin'...
+	remote: Counting objects: 31864, done.
+	remote: Compressing objects: 100% (12007/12007), done.
+	remote: Total 31864 (delta 24480), reused 26530 (delta 19621)
+	Receiving objects: 100% (31864/31864), 18.47 MiB | 119 KiB/s, done.
+	Resolving deltas: 100% (24480/24480), done.
+	$
+
+![notes](notes.png)提示和结果输出可能因为版本不同而有所不同。请根据随代码附带的文档执行，即使与你在这看到的提示不同，如果实际输出结果与这里的例子显示的输出有轻微差异，也不必惊讶。
+
+当git克隆操作完成后，在bitcoin目录中就拥有了一份代码库的完整的本地副本。在提示符下键入命令“cd bitcoin",进入该目录：
+
+	$ cd bitcoin
+
+默认情况下，本地副本时与最新的版本同步的，这可能是比特币的不稳定版本，或者beta版。在编译代码前，应使用检出版本标签的形式来选择一个特定的版本。这将让本地拷贝与版本库上某个利用tag关键词打上标签的特定版本的快照进行同步。标签是开发者使用版本号对特定代码版本进行标记的技术。首先，为了找出所有可用标签，我们使用*git tag*命令：
+
+	$ git tag
+	v0.1.5
+	v0.1.6test1
+	v0.2.0
+	v0.2.10
+	v0.2.11
+	v0.2.12
+	[... many more tags ...]
+	v0.8.4rc2
+	v0.8.5
+	v0.8.6
+	v0.8.6rc1
+	v0.9.0rc1
+
+这个标签列表列出了所有比特币的发行版本。按照惯例，release candidates（候选发行版）是用于测试目的的，带有"rc"后缀。稳定发行版没有后缀，可以在生产系统上运行。从前述列表中，选择最高版本号的发行版，在写本书时，这个版本是v0.9.0rc1。为了让本地代码与这个版本同步，使用*git checkout*命令：
+
+	$ git checkout v0.9.0rc1
+	Note: checking out 'v0.9.0rc1'.
+	HEAD is now at 15ec451... Merge pull request #3605
+	$
+
+源码中包含了文档，可以在几个文件中找到。键入*more README.md*, 查阅在bitcoin目录中的README.md主文档，根据提示，使用空格键来引导文档翻到下页。在本章中，我们将构建命令行比特币客户端，在linux上又名bitcoind。键入*more doc/build-unix.md*可以查阅在你的平台上编译bitcoind命令行客户端的指南。其他平台，如Mac OS X或者Windows的编译指南也可以在doc目录下找到，相应的文件为build-osx.md或者build-msw.md。
+
+仔细研究构建的前置条件，这些在构建文档的前面部分有描述。这些是一些必须在编译bitcoind之前已经在系统安装好的库文件。如果前置条件缺少，构建过程会失败，并显示错误信息。如果这个发生了，你确实缺少某些前置要求，你可以安装相应的库，并继续从刚才中断的地方继续进行构建。假设所有前置要求都已经安装，你可以开始利用*autogen.sh*生成一系列构建脚本，开始构建过程。
+
+![notes](notes.png)比特币核心构建过程从0.9版开始变为采用autogen/configure/make系统。早期版本采用一个简单的Makefile文件，工作过程与下述例子有轻微区别。请按照选定版本的操作指南来操作。0.9版引入的autogen/configure/make构建系统很可能成为所有后续版本的构建方法，也是下面例子演示的构建系统。
+
+	$ ./autogen.sh
+	configure.ac:12: installing `src/build-aux/config.guess'
+	configure.ac:12: installing `src/build-aux/config.sub'
+	configure.ac:37: installing `src/build-aux/install-sh'
+	configure.ac:37: installing `src/build-aux/missing'
+	src/Makefile.am: installing `src/build-aux/depcomp'
+	$
+
+*autogen.sh*脚本创建一套自动配置脚本，这个脚本将检查你的系统以发现正确的设置，并确保你已经安装了编译代码所需的所有库文件。最重要的部分是configure脚本，它提供了一系列不同选项以客户化构建过程。键入*./configure --help*查看所有选项：
+
+	
+	
 	$ ./configure --help
 	
 	`configure' configures Bitcoin Core 0.9.0 to adapt to many kinds of systems.
