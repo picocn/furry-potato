@@ -935,3 +935,135 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 还有很多其他各种语言实现的库，同时更多的库正在被开发。
 
 ##libbitcoin和sx工具集
+libbitcoin库是一个C++的可扩展多线程，模块化的实现，它支持完全节点客户端，它还带一个命令行工具集，叫做sx，这个工具集提供很多与我们在本章中展示过的bitcoind客户端命令行一样的功能。sx工具集还提供一些bitcoind未提供的密钥管理和维护工具，包括type-2确定性密钥和密钥助记符功能。
+
+###安装sx
+为了安装sx以及其支持库libbitcoin，在Linux系统上下载并安装在线安装包：
+
+	$ wget http://sx.dyne.org/install-sx.sh
+	$ sudo bash ./install-sx.sh
+
+现在，sx工具集一种安装好了，键入不带参数的sx命令打印帮助文档，这会列出所有可用命令（参看附录D）
+
+![notes](notes.png)sx工具集提供许多实用的命令来对地址进行编码或解码，也可以将它们的格式或者表现方式互相转换。可以利用它们来探索各种不同的格式，比如Base58，Base58Check，十六进制，等等。
+
+##pycoin
+Python库pycoin，最早由理查德.吉斯开发和维护，是一个基于python的库，它支持操作比特币密钥和交易，甚至也支持使用脚本语言来正确处理非标准交易。
+
+pycoin库支持Python 2（2.7.x）和Python 3（3.3之后版本），同时还随带了一些好用的命令行工具，*ku*和*tx*。在python 3的虚拟环境（venv）安装pycoin 0.42的步骤如下：
+
+	$ python3 -m venv /tmp/pycoin
+	$ . /tmp/pycoin/bin/activate
+	$ pip install pycoin==0.42
+	Downloading/unpacking pycoin==0.42
+	  Downloading pycoin-0.42.tar.gz (66kB): 66kB downloaded
+	  Running setup.py (path:/tmp/pycoin/build/pycoin/setup.py) egg_info for package pycoin
+	
+	Installing collected packages: pycoin
+	  Running setup.py install for pycoin
+	
+	    Installing tx script to /tmp/pycoin/bin
+	    Installing cache_tx script to /tmp/pycoin/bin
+	    Installing bu script to /tmp/pycoin/bin
+	    Installing fetch_unspent script to /tmp/pycoin/bin
+	    Installing block script to /tmp/pycoin/bin
+	    Installing spend script to /tmp/pycoin/bin
+	    Installing ku script to /tmp/pycoin/bin
+	    Installing genwallet script to /tmp/pycoin/bin
+	Successfully installed pycoin
+	Cleaning up...
+	$
+
+这里是一个利用pycoin库来获取并花费比特币的python脚本：
+
+	#!/usr/bin/env python
+	
+	from pycoin.key import Key
+	
+	from pycoin.key.validate import is_address_valid, is_wif_valid
+	from pycoin.services import spendables_for_address
+	from pycoin.tx.tx_utils import create_signed_tx
+	
+	def get_address(which):
+	    while 1:
+	        print("enter the %s address=> " % which, end='')
+	        address = input()
+	        is_valid = is_address_valid(address)
+	        if is_valid:
+	            return address
+	        print("invalid address, please try again")
+	
+	src_address = get_address("source")
+	spendables = spendables_for_address(src_address)
+	print(spendables)
+	
+	while 1:
+	    print("enter the WIF for %s=> " % src_address, end='')
+	    wif = input()
+	    is_valid = is_wif_valid(wif)
+	    if is_valid:
+	        break
+	    print("invalid wif, please try again")
+	
+	key = Key.from_text(wif)
+	if src_address not in (key.address(use_uncompressed=False), key.address(use_uncompressed=True)):
+	    print("** WIF doesn't correspond to %s" % src_address)
+	print("The secret exponent is %d" % key.secret_exponent())
+	
+	dst_address = get_address("destination")
+	
+	tx = create_signed_tx(spendables, payables=[dst_address], wifs=[wif])
+	
+	print("here is the signed output transaction")
+	print(tx.as_hex())
+
+命令行工具*ku*和*tx*的例子参看附录B。
+
+##btcd
+
+btcd是一个Go语言开发的完全节点比特币工具。目前，它的下载、验证、服务区块链采用的区块验证规则与参考实现bitcoind完全一致（甚至bug也一致）。它同样正确中继新挖出的区块，维护交易池，中继尚未进入区块的交易。它确保获准进入交易池的交易严格遵守要求的规则以及大多数矿工提出的更为严格的过滤原则（“标准”交易）。
+
+btcd和bitcoind间最主要的一个区别在于，btcd没有钱包功能，这是btcd的一个故意的设计决定。这意味着，你无法直接使用btcd发送或接收支付款项。钱包功能由btcwallet和btcgui提供，这两个软件都出于积极开发中。其他比较显著的区别包括：btcd同时支持HTTP POST请求（bitcoind也支持）和默认的Websocket连接，实际上，btcd的RPC连接是默认启用TLS的（译者：TLS，安全传输层协议，用于在两个通信应用程序之间提供保密性和数据完整性）。
+
+###安装btcd
+
+要在Windows下安装btcd，需要从GitHub（https://github.com/conformal/btcd/releases）上下载msi安装包，并进行安装；如果是Linux系统，假设你已安装了Go语言：
+
+	$ go get github.com/conformal/btcd/...
+
+若需要更新btcd版本，直接执行：
+
+	$ go get -u -v github.com/conformal/btcd/...
+
+###控制btcd
+
+btcd有一系列配置选项，你可以通过以下命令查看：
+
+	$ btcd --help
+
+btcd安装时随带了一些好东西，比如btctl，这是一个命令行工具，可以用于通过RPC控制或查询btcd。btcd默认没有启用其RPC服务；你至少需要在下面的配置文件中配置好RPC的用户名和密码：
+
+* *btcd.conf*
+
+	[Application Options]
+
+	rpcuser=myuser
+
+	rpcpass=SomeDecentp4ssw0rd
+
+* *btcctl.conf*
+
+	[Application Options]
+
+	rpcuser=myuser
+
+	rpcpass=SomeDecentp4ssw0rd
+
+或者如你你想通过命令覆盖配置文件，可以采用以下方式：
+
+	$ btcd -u myuser -P SomeDecentp4ssw0rd
+	$ btcctl -u myuser -P SomeDecentp4ssw0rd
+
+以下命令列出所有可用选项：
+
+	$ btcctl --help
