@@ -296,6 +296,7 @@ dumpprivkey命令打开钱包并且解压出由getnewaddress生成的私钥。bi
 *表4-3 例子：相同密钥，不同格式
 
 | 格式 | 私钥 | 
+|----|----|
 | Hex | 1E99423A4ED27608A15A2616A2B0E9E52CED330AC530EDCC32C8FFC6A526AEDD |
 | WIF | 5J3mBbAH58CpQ3Y5RNJpUKPE62SQ5tfcvU2JpbnkeyhfsYB1Jcn |
 | WIF-compressed |KxFC1jmwwCoACiCAWZ3eXa96mBM6tb3TYzGmf6YwgdGWZgawvrtJ|
