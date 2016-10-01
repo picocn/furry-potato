@@ -1,6 +1,8 @@
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 第四章 密钥，地址，钱包
 ======
-# 简介
+# 简介 #
+
 比特币的拥有证明是基于数字密钥，比特币地址以及数字签名。数字密钥实际上并不存储于网络上，而是由用户创建并以文件或者简单数据库的形式由用户自行保存， 叫做钱包。用户钱包中的数字密钥是完全独立于比特币协议的，它可以由钱包软件创建、管理，而无需与区块链关联或者访问互联网。密钥的存在使比特币的很多特性 得以实现，包括去中心化的信任和控制，持有证明，密码学证明的安全模型等等。
 
 每个比特币交易均需要在在区块链中包含一个有效的签名，这个签名由有效的数字密钥产生，这样，任何一个拥有密钥的人均拥有这个比特币账户中比特币的控制权。 密钥是成对出现的，包含一个私钥（秘密的）和一个公钥。我们可以把公钥想象成一个银行账户的代号，私钥则是这个账户密码，或者支票上用户签名。这些数字密钥 极少被比特币用户看到，实际上，大部分时候，他们存储在钱包文件中，并且由钱包软件进行管理。
@@ -86,4 +88,19 @@ dumpprivkey命令打开钱包并且解压出由getnewaddress生成的私钥。bi
 ![figure 4-2](fig4-2.png)
 
 *图4-2 一条椭圆曲线*
+
+比特币使用一个特定的椭圆曲线和一系列数学常量，这些内容在美国国家标准技术研究所（NIST）的secp256k1标准中进行了定义。secp256k1曲线是由以下函数定义的，它构成了一条椭圆曲线：
+
+
+![equation](http://latex.codecogs.com/gif.latex?y^2=(x^3+7)over(\mathbb{F}_p))
+
+或者
+
+![equation](http://latex.codecogs.com/gif.latex?y^2~\text{mod}~p=(x^3+7)~\text{mod}~p)
+
+*mod p*(对素数p取模）表明，这个曲线是在素数阶p的有限域上，也写成
+![equation](http://latex.codecogs.com/gif.latex?\mathbb{F}_p)，其中
+![equation](http://latex.codecogs.com/gif.latex?p=2^{256}-2^{32}-2^9-2^8-2^7-2^6-2^4-1)，是一个非常大的素数。
+
+
 
