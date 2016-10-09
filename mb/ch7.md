@@ -161,8 +161,112 @@ Nonce（随机数），Difficulty target（难度目标），Timestamp（时间�
 
 *图7-4 一棵汇总了很多数据元素的默克尔树*
 
-为了证明一个特定交易包含在区块中，节点只需创建log2(N) 个32字节的哈希值，组成一个*鉴证路径*或*默克尔路径*，将交易连接到树的根上。
+为了证明一个特定交易包含在区块中，节点只需创建log2(N) 个32字节的哈希值，形成一条从交易到树根的路径，叫*认证路径*或*默克尔路径*。当交易数量增长时，这显得尤为重要，因为底数为2的交易数量的对数增长相对交易数量增长要慢得多。这允许比特币节点高效的产生一条10到12个哈希值（320到384字节）的路径，从而证明交易是否属于区块，通常一个1M左右大小的区块含有超过1000个交易。
 
+在**图7-5**中，节点只要产生一条包含4个哈希的默克尔路径就能够证明交易K从属于区块，每个哈希32字节，总共也就128字节。这条路径包含4个哈希值（**图7-5**中用蓝色标注）：HL，HIJ,HMNOP和HABCDEFGG。这四个哈希组成了一条认证路径，再加上另外四个与这些节点成对出现的哈希值HKL，HIJKL，HIJKLMNOP以及默克尔根，任何节点就可通过计算证明Hk（图中绿色标注）包含在默克尔根中。
 
+![图7-5](fig7-5.png)
 
+*图7-5 一条默克尔路径，用于证明包含某个数据元素*
 
+**例7-1**的代码演示了从叶子节点哈希一直到根节点创建默克尔树的过程，例中使用了libbitcoin库中的一些辅助函数。
+
+*例7-1 创建一棵默克尔树*
+
+	#include <bitcoin/bitcoin.hpp>
+	
+	bc::hash_digest create_merkle(bc::hash_list& merkle)
+	{
+	    // 如果哈希列表为空则停止
+	    if (merkle.empty())
+	        return bc::null_hash;
+	    else if (merkle.size() == 1)
+	        return merkle[0];
+	
+	    // 只要列表中超过1个哈希，就继续...
+	    while (merkle.size() > 1)
+	    {
+	        // 如果哈希数量为奇数，复制列表中最后一个哈希.
+	        if (merkle.size() % 2 != 0)
+	            merkle.push_back(merkle.back());
+	        // 现在列表大小是偶数了
+	        assert(merkle.size() % 2 == 0);
+	
+	        // 新哈希列表
+	        bc::hash_list new_merkle;
+	        // 依次哈希，每次2个
+	        for (auto it = merkle.begin(); it != merkle.end(); it += 2)
+	        {
+	            // 将当前的两个哈希值连接在一起.
+	            bc::data_chunk concat_data(bc::hash_size * 2);
+	            auto concat = bc::make_serializer(concat_data.begin());
+	            concat.write_hash(*it);
+	            concat.write_hash(*(it + 1));
+	            assert(concat.iterator() == concat_data.end());
+	            // 对两个哈希值进行哈希
+	            bc::hash_digest new_root = bc::bitcoin_hash(concat_data);
+	            // 加入新列表
+	            new_merkle.push_back(new_root);
+	        }
+	        // 新列表
+	        merkle = new_merkle;
+	
+	        // DEBUG output -------------------------------------
+	        std::cout << "Current merkle hash list:" << std::endl;
+	        for (const auto& hash: merkle)
+	            std::cout << "  " << bc::encode_hex(hash) << std::endl;
+	        std::cout << std::endl;
+	        // --------------------------------------------------
+	    }
+	    // Finally we end up with a single item.
+	    return merkle[0];
+	}
+	
+	int main()
+	{
+	    // 将下面的哈希值替换为从区块中取得的值，以产生相同的默克尔根.
+	    bc::hash_list tx_hashes{{
+	        bc::hash_literal("0000000000000000000000000000000000000000000000000000000000000000"),
+	        bc::hash_literal("0000000000000000000000000000000000000000000000000000000000000011"),
+	        bc::hash_literal("0000000000000000000000000000000000000000000000000000000000000022"),
+	    }};
+	    const bc::hash_digest merkle_root = create_merkle(tx_hashes);
+	    std::cout << "Result: " << bc::encode_hex(merkle_root) << std::endl;
+	    return 0;
+	}
+
+**例7-2**显示编译运行代码的结果。
+
+*例7-2 编译并运行示例代码*
+
+	$ # Compile the merkle.cpp code
+	$ g++ -o merkle merkle.cpp $(pkg-config --cflags --libs libbitcoin)
+	$ # Run the merkle executable
+	$ ./merkle
+	Current merkle hash list:
+	  32650049a0418e4380db0af81788635d8b65424d397170b8499cdc28c4d27006
+	  30861db96905c8dc8b99398ca1cd5bd5b84ac3264a4e1b3e65afa1bcee7540c4
+
+	Current merkle hash list:
+	  d47780c084bad3830bcdaf6eace035e4c6cbf646d103795d22104fb105014ba3
+
+	Result: d47780c084bad3830bcdaf6eace035e4c6cbf646d103795d22104fb105014ba3
+
+当规模增长时，默克尔树的效率变得非常明显。**表7-3**展示了为证明区块中存在某交易而创建默克尔路径所需交换的数据量。
+
+*表7-3 默克尔树的效率*
+
+|交易数量|区块粗略大小|路径尺寸（哈希数）|路径尺寸（字节）|
+|--------|------------|------------------|-------------|
+|16个交易|4K字节|4哈希|128字节|
+|512个交易|128K字节|9哈希|288字节|
+|2048交易|512K字节|11哈希|352字节|
+|65,535交易|16M字节|16哈希|512字节|
+
+正如在表中看到的，区块大小增长很快，从4KB，16个交易，到16M65535个交易，但是用于证明交易是否包含的默克尔路径增长却慢得多，仅仅从128字节增长到512字节。有了默克尔树，节点可以只下载区块头（每区块80字节），通过从其他完全节点获取一个很小的默克尔路径，即可以判断交易是否包含在区块中，不需要存储或传输区块链中的绝大部分内容，这些数据有好几G字节。不维护全量区块链的节点叫作简单支付验证节点（SPV节点），它们使用默克尔路径来验证交易，不需要下载全部区块。
+
+#默克尔树和简单支付验证（SPV）
+
+默克尔树在SPV节点中得到了广泛应用。SPV节点不保存全部交易，也不含有完整区块数据，仅仅存有区块头信息。在不必下载区块中完整交易的情况下，SPV节点利用认证路径或默克尔路径来验证交易是否包含在区块中。
+
+考虑一个SPV节点，它对收到的一个向它钱包中某个地址进行支付的交易感兴趣。SPV节点将在它与其他对等节点的连接上建立一个布隆过滤器，限制只接收那些它感兴趣的地址的交易。当一个对等节点看到一个交易与布隆过滤器匹配是，它将把那个区块使用*merkleblock*消息发送到SPV节点上。*merkleblock*消息包含区块头，以及一条将区块中感兴趣的交易连接到默克尔根的默克尔路径。SPV节点可利用默克尔路径将交易与区块相连，并验证交易被区块包含。SPV节点也利用区块头信息将区块连接到区块链当中。交易与区块，区块与区块链，这两个连接的组合，提供了交易已记录于区块链中的证明。总之，SPV节点收到的包含区块头和默克尔路径的数据还不到1K字节，比整个区块数据（目前大约1M）小了一千倍。
