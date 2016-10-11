@@ -5,9 +5,9 @@
 
 挖矿是维持比特币货币供应中的一个过程。同时，挖矿也保护着比特币系统的安全，防止不当交易或者双重支付。即同一笔比特币资金在不同交易里使用。矿工向比特币网络提供处理能力，以交换获取比特币奖励的机会。
 
-矿工验证新的交易，并把它们记录到全局账本上。一个新区块，包含从上个区块以来发生的交易，每隔10分钟左右被“挖”出，从而将这些交易记录到区块链当中。成为区块一部分的交易并被加入区块链的交易被认为是“已确认的”，这使得比特币新的所有者可以花费在这些交易中收到的比特币。
+矿工验证新的交易，并把它们记录到全局账本上。一个新区块，包含从上个区块以来发生的交易，每隔10分钟左右被“开采”出，从而将这些交易记录到区块链当中。成为区块一部分的交易并被加入区块链的交易被认为是“已确认的”，这使得比特币新的所有者可以花费在这些交易中收到的比特币。
 
-矿工们获得两种类型的挖矿补偿：每个新区块中产生的新比特币；新区块中包含的所有交易的交易费用。为了赢得这些报酬，矿工通过竞争的方式基于密码学哈希算法解决一个极为复杂的数学问题。问题的解称为工作量证明，包含在新区块中，作为矿工付出的显著计算工作量的证明。竞争解决工作量证明算法，赢取奖励以及在区块链上记录交易的权利构成了比特币安全模型的基础。
+矿工们获得两种类型的挖矿补偿：每个新区块中产生的新比特币；新区块中包含的所有交易的交易费用。为了赢得这些报酬，矿工通过竞争的方式基于加密哈希算法解决一个极为复杂的数学问题。问题的解称为工作量证明，包含在新区块中，作为矿工付出的显著计算工作量的证明。竞争解决工作量证明算法，赢取奖励以及在区块链上记录交易的权利构成了比特币安全模型的基础。
 
 新比特币产生的过程之所以叫做挖矿，是因为奖励是设计成递减的，就像贵金属的挖矿。比特币的货币供应通过挖矿来实现，类似中央银行通过印钞来发行货币。矿工可以加入区块的新产生比特币数量大概四年（精确的说是每210,000个区块）减少一次。2009年1月比特币网络开始运行的时候每挖出一个区块有50比特币产生，到2012年11月，这个数额减少一半，降为25比特币。到2016年7月（译者：原书为2016年某个时候），已降至12.5比特币每区块。基于这个公式，比特币挖矿奖励以指数级下降一直到大约2140年，所有比特币（20999.99998万）都将被发行完毕。2140后将不会在发行新比特币。
 
@@ -235,4 +235,353 @@
         "blocktime" : 1388185914
     }
 
-不像普通交易，生成交易不需要消耗（花费）UTXO。实际上，它只有一个输入，叫做*币基（coinbase）*，这个交易从无到有生成了比特币。生成交易有一个输出，支付到矿工的比特币地址。生成交易的输出将25.09094928比特币发送到矿工的比特币地址。在本例中，地址为：*1MxTkeEP2PmHSMze5tUZ1hAV3YTKu2Gh1N*
+不像普通交易，生成交易不需要消耗（花费）UTXO。实际上，它只有一个输入，叫做*币基（coinbase）*，这个交易从无到有生成了比特币。生成交易有一个输出，支付到矿工的比特币地址。生成交易的输出将25.09094928比特币发送到矿工的比特币地址。在本例中，地址为：*1MxTkeEP2PmHSMze5tUZ1hAV3YTKu2Gh1N*。
+
+## 币基奖励与交易费用
+
+首先，为了构建一个生成交易，景的节点对所有加入区块的418个交易的输入和输出进行汇总扎差，计算得出交易费用。计算公式如下：
+
+    Total Fees = Sum(Inputs) - Sum(Outputs)
+
+在区块277,316中，总的交易费用是0.09094928比特币。
+
+其次，景的节点需要计算新区块的准确奖励金额。奖励金额的计算基于区块高度，从每区块50比特币开始，每210,000个区块减半。当前的区块高度是277,316，因此正确的奖励是25比特币。
+
+计算过程可以在比特币核心客户端的函数*GetBlockValue*中查到，如**例8-5**所示。
+
+*例8-5 计算区块奖励---函数GetBlockValue，比特币核心客户端，main.cpp, 第1305行*
+
+    int64_t GetBlockValue(int nHeight, int64_t nFees)
+    {
+        int64_t nSubsidy = 50 * COIN;
+        int halvings = nHeight / Params(). SubsidyHalvingInterval();
+        // 如果右移未设置，强制区块奖励为0
+        if (halvings >= 64)
+       	    return nFees;
+        // 每经过210,000个区块奖金减半，大致4年发生一次
+        nSubsidy >>= halvings;
+        return nSubsidy + nFees;
+    }
+
+初始奖励是以聪为单位进行计算的，其值为50*COIN常量（100,000,000聪）。即初始的奖励金（**nSubsidy**）为50亿聪。
+
+接下来，计算已经发生的**halvings**（减半）次数：将当前的区块高度除以减半间隔（**SubsidyHalvingInterval**）。对区块277,316来说，除以210,000的减半间隔，其结果为1，即1个减半。
+
+允许的最大的减半次数为64次，所以在代码中，如果减半次数超出了64，就将奖励金设置为0（只返回交易费用）。
+
+再接下来，函数采用右移操作符对奖励（nSubsidy）进行除2操作，每次减半右移一位，即除2。对于区块277,316，由于减半次数为1次，则对奖励金（50亿聪）右移操作一次，得到的结果是25亿聪，或者25个比特币。之所以使用右移操作符是因为它做除2操作的效率比整形或浮点型除法高得多。
+
+最后，函数将币基奖励（nSubsidy）与交易费用（nFees）相加，返回和。
+
+## 生成交易的结构
+
+通过以上计算，景的节点创建了一个生成交易，向他自己支付了25.09094928比特币。
+
+从**例8-4**可以看到，生成交易使用一种特殊的格式。相对普通交易的输入需要指定用于花费的前序UTXO，生成交易只有一个“币基”输出。我们在**表5-3**中考察了普通交易的输入。现在我们将普通交易的输入与生成交易的输入做个对比。**表8-1**显示的是普通交易输入的数据结构，**表8-2**显示的是生成交易输入的数据结构。
+
+*表8-1 “普通”交易的输入结构*
+
+|大小|字段|描述|
+|----|----|----|
+|32字节|交易哈希(Transaction Hash)|指向待花费UTXO所在交易的指针|
+|4字节|输出索引号(Output Index)|UTXO的索引号，开始值为0|
+|1-9字节(VarInt)|解锁脚本大小(Unlocking-Script Size)|紧跟其后的解锁脚本大小，单位字节|
+|变长|解锁脚本(Unlocking-Script)|满足UTXO锁定脚本条件的脚本|
+|4字节|序列号(Sequence Number)|当前尚未启用的Tx替代功能，设置为0xFFFFFFFF|
+
+*表8-2 生成交易的输入结构*
+
+|大小|字段|描述|
+|----|----|----|
+|32字节|交易哈希|所有位均为0:不是一个交易引用|
+|4字节|输出索引号|所有位均为1:0xFFFFFFFF|
+|1-9字节(VarInt)|币基数据大小(Coinbase Data Size)|币基数据的大小，从2到100字节|
+|变长|币基数据(Coinbase Data)|任意长度的数据，用于额外的随机数以及v2区块中的挖矿标签，必须以区块高度开头|
+|4字节|序列号(Sequence Number)|设置为0xFFFFFFFF|
+
+在生成交易中，前两个字段设置为与UTXO引用无关的值。第一个字段是32位的“0”，而不是“交易哈希”。“输出索引”用4字节0xFF填充（十进制255）。“解锁脚本”被替换为币基数据，一个可由矿工自由定义的数据。
+
+## 币基数据
+
+生成交易没有解锁脚本（*scriptSig*）字段。相反，这个字段被替换为币基数据，长度限定在2到100字节间。除了前面几个字节，币基数据剩余部分可被矿工用于其原意的任何用途，填充任意数据。
+
+作为例子，在创世区块中，中本聪在币基数据中填上了这段话：“《泰晤士报》，2009年1月3日，财政大臣站在第二次救助银行的边缘（The Times 03/Jan/2009 Chancellor on brink of second bailout for banks）”，用以证明比特币发明日期并传达一条信息。当前，矿工们通常使用币基数据包含额外的随机数，并附上标识其矿池信息的字符串，我们将在接下来的几个章节讨论。
+
+币基的前几个字节曾经也是任意的，但是现在不这样了。依据比特币改进建议34号（BIP0034），版本2区块（版本字段设置为2的区块）必须在币基字段的最前面附加区块高度索引，作为脚本的“推送”操作。
+
+在区块277,316，我们看到币基（参看**例8-4**），在交易输入的“解锁脚本”或*scriptSig*字段，包含一段十六进制数据*03443b0403858402062f503253482f*。我们将其解码，看看其内容。
+
+第一个字节，03，指示脚本指向引擎将后续三个字节推送到脚本堆栈中（参看**表A-1**）。接下来的三个字节，0x443b04，以小字节序（little endian）格式编码的区块高度。将其字节序翻转，结果就是0x043b44，对应的十进制就是277,316。
+
+紧接着的几个十六进制数字（03858402062）用于编码额外随机数（参看第206页《额外随机数解决方案》），以用于找到合适的工作量证明的解。
+
+最后部分（2f503253482f）是ASCII编码的字符串（“/P2SH/”），提示本区块的挖矿节点支持BIP0016定义的“支付到脚本哈希（P2SH）”。P2SH能力的引进的时候要求矿工“投票”从BIP0016和BIP0017中间选择一个。那些选择了BIP0016实现的矿工会将"/P2SH/"加进币基数据。而那些选择了BIP0017的P2SH实现的矿工则在币基数据中加入字符串“p2sh/CHV”。最终BIP0016成了赢家，但是很多矿工依然将字符串/P2SH/加入到币基中，说明其支持这个特性。
+
+**例8-6**使用libbitcoin库（第56页《替代客户端，库和工具集》）从创世区块中提取币基数据，并显示中本聪在区块中留下的信息。需要注意的是，libbitcoin内嵌了创世区块的静态拷贝，所以示例代码可以直接从库中提取创世区块。
+
+*例8-6 从创世区块提取币基数据*
+
+    /*
+    显示中本聪在创世区块中留下的信息
+    */
+    #include <iostream>
+    #include <bitcoin/bitcoin.hpp>
+    int main()
+    {
+        // 生成创世区块
+        bc::block_type block = bc::genesis_block();
+        // 创世区块包含只包含一个币基交易
+        assert(block. transactions.size() == 1);
+        // 取区块中的第一个交易 (coinbase).
+        const bc::transaction_type& coinbase_tx = block. transactions[0];
+        // 币基交易只有个输入.
+        assert(coinbase_tx.inputs.size() == 1);
+        const bc::transaction_input_type& coinbase_input = coinbase_tx.inputs[0];
+        // 将输入脚本转换为其原始格式
+        const bc::data_chunk& raw_message = save_script(coinbase_input.script);
+        // 转换为 std::string.
+        std::string message;
+        message.resize(raw_message.size());
+        std::copy(raw_message.begin(), raw_message.end(), message.begin());
+        // 显示创世区块信息
+        std::cout << message << std::endl;
+        return 0;
+    }
+
+使用GNU C++编译这段代码，运行生成的可执行程序，结果如**例8-7**所示。
+
+*例8-7 编译运行satoshi-words示例代码*
+
+    $ # Compile the code
+    $  g++ -o satoshi-words satoshi-words.cpp $(pkg-config --cflags --libs libbitcoin)
+    $ # Run the executable
+    $ ./satoshi-words
+    ^D��<GS>^A^DEThe Times 03/Jan/2009 Chancellor on brink of second bailout for banks
+
+
+# 创建区块头
+
+为了创建区块头，挖矿节点需要填充六个字段，见**表8-3**
+
+*表8-3 区块头结构*
+
+|大小|字段|描述|
+|-----|-----|------|
+|4字节|版本（Version）|用于跟踪软件/协议更新的版本号|
+|32字节|前序区块哈希（Previous Block Hash）|链中前一个区块（父区块）的哈希值|
+|32字节|默克尔根（Merkle Root）|本区块交易默克尔树的根的哈希|
+|4字节|时间戳（Timestamp）|区块大致创建时间（Unix时间戳）|
+|4字节|难度目标（Difficulty Target）|本区块工作量证明算法的难度目标|
+|4字节|随机数（Nonce）|用于工作量证明算法的计数器|
+
+在区块277,316被开采出来时，描述区块结构的版本号是2，以小字节序格式编码的4字节数字是0x02000000。
+
+接着，挖矿节点需要添加“前序区块哈希”。即区块277,315的区块头哈希，区块277,315是景的节点从网络上接收到的最新区块，景已接受，并选为候选区块277,316的父区块。区块277,315区块头的哈希是：
+
+    0000000000000002a7bbd25a417c0374cc55261021e8a9ca74442b01284f0569
+
+下一个步骤是将所要交易汇总成一棵默克尔树，以便计算并添加默克尔根至区块头中。生成交易将被列到区块中的第一个交易。然后，418个其他交易添加在其后，最终总共有419个交易被添加到区块中。正如我们在第164页《默克尔树》中看到的，树的叶子节点数量必须为偶数，所有将最后一笔交易复制一便，形成420个叶子节点，每个节点均对应一笔交易的哈希值。交易哈希按对组合，继续进行哈希计算，从而生成树的不同层次，直到所有交易被汇总到位于树“根”的节点。默克尔树的根将所有交易摘要汇总成一个32字节的数值，如**例8-3**所示的“默克尔根”：
+
+    c91c008c26e50763e9f548bb8b2fc323735f73577effbc55502c51eb4cc7cf2e
+
+接下来，挖矿节点添加上一个4字节的时间戳，以Unix“纪元（Epoch）”时间戳格式编码，它是以1970年1月1日0点（UTC/GMT时区）为起点，到目前经历的时间秒数的计时方式。时间1388185914与“2013年12月27日星期五23：11：54 UTC/GMT”等价。
+
+再下一步，节点填充难度目标值，这个值定义了保证本区块有效的工作量证明难度的要求值。难度值在区块中以“难度位”度量标准进行存储，难度位是尾数-指数格式编码的。这种编码格式含1字节的指数，紧跟3字节的尾数（系数）。举例来说，在区块277,316中，难度位的值为0x1903a30c，第一部分0x19是十六进制的指数，第二部分0x03a30c为系数。难度目标的概念在第195页《难度目标与重定目标》描述，“难度位”表示在第194页《难度表示》中解释。
+
+最后一个字段是随机数（Nonce），初始化为0。
+
+填充完所有其它字段后，区块头就完成了，而区块的挖矿过程就可以开始进行了。现在的目标是找到一个随机数（Nonce），使得区块头的哈希小于难度目标。挖矿节点需要测试成千上万亿个随机数（Nonce），直到找到一个满足要求的Nonce值。
+
+# 区块开采
+
+现在候选区块已经被景的节点构建完成，是时候让硬件矿机来“开采”这个区块了---找到工作量证明算法的解，使得区块有效。在本书中，我们已经学习了加密哈希函数，它们在比特币系统的各个方面被广泛采用。SHA256是用于比特币挖矿过程的哈希函数。
+
+用最简单的话说，挖矿就是通过不断修改一个参数，重复计算区块头的哈希，直到找到一个与目标值匹配的哈希的过程。哈希函数的结果无法提前预知，也不能创建一个模式使其产生特定哈希。哈希函数的这个特性意味着生成哈希结果并匹配特定目标的唯一途径就是不停的尝试，通过随机修改输入，生成不同哈希，直到碰巧得到希望的结果。
+
+## 工作量证明算法
+
+哈希算法使用任意长度的数据作为输入，生成一个固定长度的确定结果，即输入数据的数字指纹。对于任意特定的输入，结果总是相同的，可被任何实现了相同哈希算法的人轻易计算并验证。加密哈希算法的关键特性是对于两个不同的输入，几乎不可能生成相同的指纹。作为推论，给定一个数字指纹，除了尝试随机输入，几乎不可能选择一个输入使其哈希值与给定指纹相同。
+
+采用SHA256算法，不管输入的长度是多少，其输出总是256位。在**例8-8**中，我们利于Python解释器来计算短语“I am Satoshi Nakamoto”（我是中本聪）的SHA256哈希。
+
+*例8-8 SHA256示例*
+
+    $ python
+    Python 2.7.1
+    >>> import hashlib
+    >>> print hashlib.sha256("I am Satoshi Nakamoto" ).hexdigest()
+    5d7c7ba21cbbcd75d14800b100252d5b428e5b1213d27c385bc141ca6b47989e
+**例8-8**显示了“I am Satoshi Nakamoto”的哈希值计算结果：5d7c7ba21cbbcd75d14800b100252d5b428e5b1213d27c385bc141ca6b47989e。这个256位的数字就是短语的*哈希*或者*摘要*，它依赖于短语中的所有部分。增加一个字母，标点符号，或任何其他字符都会导致生成不同的哈希。
+
+现在，如果我们改变短语，我们将会看到一个完全不同的哈希。让我们试着加一个数字到短语的末尾，仍然使用简单的Python脚本进行计算，如**例8-9**：
+
+*例8-9 SHA256， 使用脚本通过迭代一个随机数产生多个哈希值*
+
+    # 示例：在哈希算法的输入中迭代一个随机数
+    import hashlib
+    text = "I am Satoshi Nakamoto"
+    # 从0到19迭代nonce
+    for nonce in xrange(20):
+        # 将nonce加到文本结尾处
+        input = text + str(nonce)
+        # 计算SHA-256哈希 (text+nonce)
+        hash = hashlib.sha256(input).hexdigest()
+        # 显示输入和哈希结果
+        print input, '=>' ,  hash
+
+运行这个脚本将产生几个短语的哈希值，这些短语通过在文本最后添加一个数字而有所不同。通过增加数字，我们能够得到不同的哈希，如**例8-10**所示：
+
+*例8-10 SHA256的输出，使用脚本通过迭代一个随机数产生多个哈希值*
+
+    $ python hash_example.py
+    I am Satoshi Nakamoto0 => a80a81401765c8eddee25df36728d732...
+    I am Satoshi Nakamoto1 => f7bc9a6304a4647bb41241a677b5345f...
+    I am Satoshi Nakamoto2 => ea758a8134b115298a1583ffb80ae629...
+    I am Satoshi Nakamoto3 => bfa9779618ff072c903d773de30c99bd...
+    I am Satoshi Nakamoto4 => bce8564de9a83c18c31944a66bde992f...
+    I am Satoshi Nakamoto5 => eb362c3cf3479be0a97a20163589038e...
+    I am Satoshi Nakamoto6 => 4a2fd48e3be420d0d28e202360cfbaba...
+    I am Satoshi Nakamoto7 => 790b5a1349a5f2b909bf74d0d166b17a...
+    I am Satoshi Nakamoto8 => 702c45e5b15aa54b625d68dd947f1597...
+    I am Satoshi Nakamoto9 => 7007cf7dd40f5e933cd89fff5b791ff0...
+    I am Satoshi Nakamoto10 => c2f38c81992f4614206a21537bd634a...
+    I am Satoshi Nakamoto11 => 7045da6ed8a914690f087690e1e8d66...
+    I am Satoshi Nakamoto12 => 60f01db30c1a0d4cbce2b4b22e88b9b...
+    I am Satoshi Nakamoto13 => 0ebc56d59a34f5082aaef3d66b37a66...
+    I am Satoshi Nakamoto14 => 27ead1ca85da66981fd9da01a8c6816...
+    I am Satoshi Nakamoto15 => 394809fb809c5f83ce97ab554a2812c...
+    I am Satoshi Nakamoto16 => 8fa4992219df33f50834465d3047429...
+    I am Satoshi Nakamoto17 => dca9b8b4f8d8e1521fa4eaa46f4f0cd...
+    I am Satoshi Nakamoto18 => 9989a401b2a3a318b01e9ca9a22b0f3...
+    I am Satoshi Nakamoto19 => cda56022ecb5b67b2bc93a2d764e75f...
+
+每个短语均产生一个完全不同的输出。它们看起来完全随机，但是你可以在任何计算机上使用Python重新生成完全相同的结果，看到完全一样的哈希值。
+
+在这类场景中作为变量使用的数字叫做*随机数（nonce）*。这个随机数用于改变加密函数的输出，在本例中，它用于改变短语的SHA256指纹。
+
+为了使这个算法具有挑战性，我们任意设置一个目标：找到一个短语，它的十六进制哈希值开始于0。很幸运，这个不难！**例8-10**显示，短语“I am Satoshi Nakamoto13”的哈希值“0ebc56d59a34f5082aaef3d66b37a661696c2b618e62432727216ba9531041a5”符合我们的规则。经过13次尝试我们达成了目标，从概率的角度看，如果哈希函数的输出是均匀分布的，我们可以期望每经过十六次哈希计算就找到一个以十六进制0开头的结果（十六进制0到F的十六分之一）。用数字的角度看，就是找到一个比0x1000000000000000000000000000000000000000000000000000000000000000小的哈希值。我们把这个阈值叫做*目标（target）*，要做的就是找到一个哈希值，其数值*小于这个目标*。如果缩小目标，要查找小于它的哈希值的任务将变得越来越困难。
+
+做一个简单类比，我们想象一个游戏，游戏玩家重复投一对骰子，试图找到一个小于特定目标的点数。在第一回合，目标是12，除非投了两个6，都会赢。第二轮，目标为11，玩家必须投出10或以下的点数才能赢，这轮仍然很简单。几轮过后，目标降到了5。现在，半数以上的投掷点数之和都会超过5，也就是无效的。随着目标值越小，有效投掷次数将成指数级增加。最终，当目标降到2时（最小可能点数），赢得几率只剩下1/36，或者2%。
+
+在**例8-10**中，获胜的“随机数”是13，这个结果可以被任何人独立确认。任何人都可以将13添加到短语“I am Satoshi Nakamoto”之后并计算哈希，验证结果是否小于目标值。成功结果也是工作量的证明，因为它证明了我们已经做了足够多工作找到了随机数。虽然只要进行一次哈希计算就能进行验证，但是找到一个可用的随机数却需要进行13次的哈希计算。如果我们的目标值更低（难度更高），就需要更多次数的哈希计算才能找到合适的随机数，但是任何人想验证，仍然只需要进行一次哈希计算。此外，知道目标值后，任何人都可以利用统计学原理对难度进行估算，进而知道需要完成多少工作才能找到一个合适的随机数。
+
+比特币的工作量证明与**例8-10**的挑战非常类似。首先，矿工创建一个填满交易的候选区块。接着，矿工计算区块头的哈希，看其是否小于当前的*目标值*。如果哈希不小于目标，矿工就修改随机数（通常就是对随机数加1）并重新计算。在比特币网络当前的难度值下，矿工平均需要尝试千万亿（10^15）次以上才能找到一个随机数，使得区块头的哈希值足够小。
+
+**例8-11**是一个高度简化的工作量证明算法，基于Python实现。
+
+*例8-11 简化的工作量证明实现*
+
+    #!/usr/bin/env python
+    # 工作量证明算法示例
+
+    import hashlib
+    import time
+
+    max_nonce = 2 ** 32 # 4 billion
+
+    def proof_of_work(header, difficulty_bits):
+
+        # 计算难度目标
+        target = 2 ** (256-difficulty_bits)
+
+        for nonce in xrange(max_nonce):
+            hash_result = hashlib.sha256(str(header)+str(nonce)).hexdigest()
+
+            # 检查是否是有效结果，目标值之下
+            if long(hash_result, 16) < target:
+                print "Success with nonce %d" % nonce
+                print "Hash is %s" % hash_result
+                return (hash_result,nonce)
+
+        print "Failed after %d (max_nonce) tries" % nonce
+        return nonce
+
+
+    if __name__ == '__main__':
+        nonce = 0
+        hash_result = ''
+        # 难度从0到31位
+        for difficulty_bits in xrange(32):
+            difficulty = 2 ** difficulty_bits
+            print "Difficulty: %ld (%d bits)" % (difficulty, difficulty_bits)
+
+            print "Starting search..."
+
+            # 检查点：起始时间
+            start_time = time.time()
+
+            # 创建一个新区块，包含上一区块的哈希
+            # 伪造一个区块的交易-就是-一个字符串
+            new_block = 'test block with transactions' + hash_result
+
+            # 查找新区块的有效随机数
+            (hash_result, nonce) = proof_of_work(new_block, difficulty_bits)
+
+            # 检查点：多长时间找到结果
+            end_time = time.time()
+
+            elapsed_time = end_time - start_time
+            print "Elapsed Time: %.4f seconds" % elapsed_time
+
+            if elapsed_time > 0:
+                # 估算每秒哈希数
+                hash_power = float(long(nonce)/elapsed_time)
+                print "Hashing Power: %ld hashes per second" % hash_power
+
+运行这段代码，你可以设置希望的难度（比特位，即头部多少位为0），看看需要多长时间才能找到一个解。**例8-12**显示的是在一台普通台式机上的工作情况。
+
+    $ python proof-of-work-example.py*
+    Difficulty: 1 (0 bits)
+
+    [...]
+
+    Difficulty: 8 (3 bits)
+    Starting search...
+    Success with nonce 9
+    Hash is 1c1c105e65b47142f028a8f93ddf3dabb9260491bc64474738133ce5256cb3c1
+    Elapsed Time: 0.0004 seconds
+    Hashing Power: 25065 hashes per second
+    Difficulty: 16 (4 bits)
+    Starting search...
+    Success with nonce 25
+    Hash is 0f7becfd3bcd1a82e06663c97176add89e7cae0268de46f94e7e11bc3863e148
+    Elapsed Time: 0.0005 seconds
+    Hashing Power: 52507 hashes per second
+    Difficulty: 32 (5 bits)
+    Starting search...
+    Success with nonce 36
+    Hash is 029ae6e5004302a120630adcbb808452346ab1cf0b94c5189ba8bac1d47e7903
+    Elapsed Time: 0.0006 seconds
+    Hashing Power: 58164 hashes per second
+
+    [...]
+
+    Difficulty: 4194304 (22 bits)
+    Starting search...
+    Success with nonce 1759164
+    Hash is 0000008bb8f0e731f0496b8e530da984e85fb3cd2bd81882fe8ba3610b6cefc3
+    Elapsed Time: 13.3201 seconds
+    Hashing Power: 132068 hashes per second
+    Difficulty: 8388608 (23 bits)
+    Starting search...
+    Success with nonce 14214729
+    Hash is 000001408cf12dbd20fcba6372a223e098d58786c6ff93488a9f74f5df4df0a3
+    Elapsed Time: 110.1507 seconds
+    Hashing Power: 129048 hashes per second
+    Difficulty: 16777216 (24 bits)
+    Starting search...
+    Success with nonce 24586379
+    Hash is 0000002c3d6b370fccd699708d1b7cb4a94388595171366b944d68b2acce8b95
+    Elapsed Time: 195.2991 seconds
+    Hashing Power: 125890 hashes per second
+
+    [...]
+
+    Difficulty: 67108864 (26 bits)
+    Starting search...
+    Success with nonce 84561291
+    Hash is 0000001f0ea21e676b6dde5ad429b9d131a9f2b000802ab2f169cbca22b1e21a
+    Elapsed Time: 665.0949 seconds
+    Hashing Power: 127141 hashes per second
+
+正如你看到的，随着难度每次增加1位，寻找解所需时间呈指数增长。考虑整个256字节的数字空间，每次你将0的位数增加1个，就将搜索空间缩减了一半。在**例8-12**中，
