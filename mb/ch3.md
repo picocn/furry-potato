@@ -1,17 +1,18 @@
+
 第三章 比特币客户端
 ======
 
 # 比特币核心：参考实现
 
-你可以从[http://bitcoin.org](http://bitcoin.org "bitcoin.org")下载参考客户端*比特币核心*，即所谓的中本聪客户端。这个参考客户端实现了比特币系统的所有功能，包括钱包，一个对交易账本（区块链）的全量副本进行交易验证的引擎，点对点比特币网络的一个完全节点。
+你可以从[http://bitcoin.org](http://bitcoin.org "bitcoin.org")下载比特币的参考客户端*比特币核心*，也叫“中本聪客户端”。这个参考客户端实现了比特币系统的所有功能，包括钱包，一个交易验证引擎（用于对全部交易账本，即区块链的全量副本进行交易验证），以及一个用于接入点对点比特币网络的完全网络节点。
 
-在[Bitcoin.org](http://bitcoin.org)网站的“选择你的钱包”页面，选择“比特币核心”来下载参考客户端。基于你的操作系统，你可以下载到不同的可执行安装包。对于Windows系统，有zip压缩包和.exe可执行程序可供下载。对于MacOS，则是一个.dmg磁盘映像。对于Linux版本，包括Ubuntu系统的PPA包，或者tar.gz档案。[Bitcoin.org](http://bitcoin.org)网页中列出的建议客户端见**图3-1**。
+在[bitcoin.org](http://bitcoin.org)网站的“选择钱包”页面，点击“比特币核心（Bitcoin Core）”下载参考客户端。基于你的操作系统，你可以下载到不同的安装包可执行文件。对于Windows系统，有zip压缩包和.exe可执行程序可供下载。对于MacOS，则是一个.dmg磁盘映像。对于Linux版本，包括Ubuntu系统的PPA包，或者tar.gz档案。[bitcoin.org](http://bitcoin.org)网页中列出的建议客户端见**图3-1**。
 
 ![figure3-1](fig3-1.1.png)
 
-*图3-1 从bitcoin.org选择下载合适的比特币客户端*
+<div align=center> *图3-1 从bitcoin.org选择下载合适的比特币客户端* </div>
 
-*所选截图为当前最新客户端列表*
+ *注：所选截图为当前最新客户端列表* 
 
 ## 首次运行比特币核心
 
@@ -21,9 +22,9 @@
 
 ![figure3-2](fig3-2.png)
 
-*图3-2 比特币核心在区块链初始化时的屏幕显示*
+<div align=center> *图3-2 比特币核心在区块链初始化时的屏幕显示* </div>
 
-![notes](notes.png)比特币核心保留一份交易账本（区块链）的全量副本，这个副本包含了了自2009年创立以来在比特币网络上发生过的所有交易。数据集大小约有几十G字节（在2013年末大概是16GB），它会以增量的形式，在几天内逐步下载完成。在区块链数据集下载完成之前，客户端都没法执行交易或者更新账户余额。这段时间内，客户端会在账户余额边上显示“未同步”，下方状态栏则会显示“正在同步”。为了完成初始化同步，请确保你有充足的硬盘空间、网络带宽和足够的时间。
+![notes](notes.png)比特币核心本地保存一份交易账本（区块链）的全量副本，包含了自2009年比特币创立以来在比特币网络上发生过的所有交易。数据集大小约有几十G字节（在2013年末大概是16GB），它会以增量的形式，在几天内逐步下载完成。在区块链数据集下载完成之前，客户端都没法执行交易或者更新账户余额。这段时间内，客户端会在账户余额边上显示“未同步”，下方状态栏则会显示“正在同步”。为了完成初始化同步，请确保你有充足的硬盘空间、网络带宽和足够的时间。
 
 
 ## 从源代码编译比特币核心
@@ -38,13 +39,13 @@
 	Resolving deltas: 100% (24480/24480), done.
 	$
 
-![notes](notes.png)终端上的提示和结果输出可能会因为版本不同而有所不同。只要按照代码中所带的文档执行，即使实际输出结果与例子中显示的有轻微差异，也是正常的。
+![notes](notes.png)终端上的提示和输出结果可能会因为版本不同而有所不同。只要按照代码中所带的文档执行，即使实际输出结果与例子中显示的有轻微差异，也是正常的。
 
-当git克隆操作完成后，在bitcoin目录中就拥有了一份代码库的完整的本地副本。在提示符下键入命令“cd bitcoin",进入该目录：
+当git克隆操作完成后，在bitcoin目录中就拥有了一份代码库的完整副本。在提示符下键入命令“cd bitcoin",进入该目录：
 
 	$ cd bitcoin
 
-默认情况下，本地副本时与最新的版本同步的，这可能是比特币的不稳定版本，或者beta版。在编译代码前，应使用检出版本标签的形式来选择一个特定的版本。这将让本地拷贝与版本库上某个利用tag关键词打上标签的特定版本的快照进行同步。标签是开发者使用版本号对特定代码版本进行标记的技术。首先，为了找出所有可用标签，我们使用*git tag*命令：
+不加参数的情况下，检出的本地副本与最新代码保持同步，这可能是比特币的一个不稳定版或beta版。因此在编译代码前，应通过加版本标签的形式来检出某个特定版本。这将让本地副本与版本库上某个特定版本的快照进行同步。这些版本标签是利用tag关键词进行标记的，它是开发者使用版本号对特定代码版本进行标记的一种技术。首先，为了找出所有可用标签，我们使用*git tag*命令：
 
 	$ git tag
 	v0.1.5
@@ -60,7 +61,7 @@
 	v0.8.6rc1
 	v0.9.0rc1
 
-这个标签列表列出了所有比特币的发行版本。按照惯例，release candidates（候选发行版）是用于测试目的的，带有"rc"后缀。稳定发行版没有后缀，可以在生产系统上运行。从前述列表中，选择最高版本号的发行版，在写本书时，这个版本是v0.9.0rc1。为了让本地代码与这个版本同步，使用*git checkout*命令：
+这个标签列表列出了所有比特币的发行版本。按照惯例，*release candidates（候选发行版）*用于测试目的，带有“rc”后缀。稳定发行版则没有后缀，可以在生产系统上运行。从上述列表中，选择最高版本号的发行版，在写本书时，这个版本是v0.9.0rc1。为了让本地代码与这个版本同步，使用*git checkout*命令：
 
 	$ git checkout v0.9.0rc1
 	Note: checking out 'v0.9.0rc1'.
@@ -69,9 +70,9 @@
 
 源码中包含了文档，可以在几个文件中找到。键入*more README.md*, 查阅在bitcoin目录中的README.md主文档，根据提示，使用空格键来引导文档翻到下页。在本章中，我们将构建命令行比特币客户端，在linux上又名bitcoind。键入*more doc/build-unix.md*可以查阅在你的平台上编译bitcoind命令行客户端的指南。其他平台，如Mac OS X或者Windows的编译指南也可以在doc目录下找到，相应的文件为build-osx.md或者build-msw.md。
 
-仔细研究构建的前置条件，这些在构建文档的前面部分有描述。这些是一些必须在编译bitcoind之前已经在系统安装好的库文件。如果前置条件缺少，构建过程会失败，并显示错误信息。如果这个发生了，你确实缺少某些前置要求，你可以安装相应的库，并继续从刚才中断的地方继续进行构建。假设所有前置要求都已经安装，你可以开始利用*autogen.sh*生成一系列构建脚本，开始构建过程。
+仔细研究构建的前置条件，在构建文档的前面部分有描述。这是一些必须在编译bitcoind之前已经在系统安装好的库文件。如果前置条件缺失，构建过程会失败，并显示错误信息。如果编译过程发现缺少了某些必须的库文件，你可以在安装好这些库文件后，重新执行编译程序，它将从刚才中断的地方开始继续进构建。假设所有前置要求都已经满足，你可以开始利用*autogen.sh*生成一系列构建脚本，开始构建过程。
 
-![notes](notes.png)比特币核心构建过程从0.9版开始变为采用autogen/configure/make系统。早期版本采用一个简单的Makefile文件，工作过程与下述例子有轻微区别。请按照选定版本的操作指南来操作。0.9版引入的autogen/configure/make构建系统很可能成为所有后续版本的构建方法，也是下面例子演示的构建系统。
+![notes](notes.png)比特币核心构建过程从0.9版开始变为采用autogen/configure/make系统。早期版本采用一个简单的Makefile文件，工作过程与下述例子有些微区别。请按照选定版本的操作指南来操作。0.9版引入的autogen/configure/make构建系统很可能成为所有后续版本的构建方法，也是下面例子演示的构建系统。
 
 	$ ./autogen.sh
 	configure.ac:12: installing `src/build-aux/config.guess'
@@ -81,10 +82,8 @@
 	src/Makefile.am: installing `src/build-aux/depcomp'
 	$
 
-*autogen.sh*脚本创建一套自动配置脚本，这个脚本将检查你的系统以发现正确的设置，并确保你已经安装了编译代码所需的所有库文件。最重要的部分是configure脚本，它提供了一系列不同选项以客户化构建过程。键入*./configure --help*查看所有选项：
+*autogen.sh*脚本将创建一套自动化配置脚本，这些脚本通过检查你的系统以发现正确的设置，并确保你已经安装了编译代码所需的所有库文件。这些脚本里面最重要的是configure脚本，它提供了一系列不同选项，帮助你定制构建过程。输入*./configure --help*，可以查看所有选项：
 
-	
-	
 	$ ./configure --help
 	
 	`configure' configures Bitcoin Core 0.9.0 to adapt to many kinds of systems.
@@ -118,7 +117,7 @@
 	
 	$
 
-configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志，来启用或禁用bitcoind某些功能。其中的FEATURE由具体功能名称代替，功能名称在以上帮助的输出信息中列出。在本章中，我们将构建的bitcoind客户端打开所有默认功能。我们将不使用配置标志，但你最好审阅并了解客户端包含哪些可选功能。接下来，运行configure脚本来自动发现所有必要的库，并为系统创建一个定制的构建脚本：
+configure脚本允许你通过--enable-FEATURE或--disable-FEATURE选项，来启用或禁用bitcoind某些功能。其中的FEATURE由具体功能名称代替，功能名称在上面的帮助信息中已经列出。在本章中，我们将构建的bitcoind客户端打开所有默认功能。我们不配置任何选项，但你最好还是好好研读一下帮助信息，了解客户端包含了哪些可选功能。接下来，运行configure脚本来自动发现所有必要的库，并为系统创建一个定制的构建脚本：
 
 	$ ./configure
 	checking build system type... x86_64-unknown-linux-gnu
@@ -144,7 +143,7 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	config.status: executing depfiles commands
 	$
 
-如果一切顺利，configure命令将成功完成定制化构建脚本的创建，这个脚本允许我们编译bitcoind。如果有缺失的库或者其他错误，configure命令将终止创建构建脚本，并输出错误。如果发生错误，很可能是因为缺失库或者库不兼容。再次查阅构建文档，确认已安装了所有先决要求。然后重新运行configure看看是否已修复了错误。接下来，你将编译源代码，这个过程可能会持续一个钟头。在编译的过程中，你每几秒或者每几分钟就会看到一些输出信息，如果有什么问题，错误信息也会显示出来。编译过程如果被中断，你也可以随时恢复编译过程。键入*make*开始编译吧：
+如果一切顺利，configure命令将成功完成定制化构建脚本的创建，这个脚本允许我们编译bitcoind。如果有缺失的库或者其他错误，configure命令将终止创建构建脚本，并输出错误。如果发生错误，很可能是因为缺失库或者库不兼容。再次查阅构建文档，确保已安装了所有先决要求。然后重新运行configure看看是否已修复了错误。接下来，你将编译源代码，这个过程可能会持续一个钟头。在编译的过程中，每隔几秒或几分钟就会输出一些信息，如果有什么问题，错误信息也会显示出来。编译如果被中断，你也可以随时恢复编译过程。键入*make*开始编译吧：
 
 	$ make
 	Making all in src
@@ -171,7 +170,7 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	make[1]: Leaving directory `/home/ubuntu/bitcoin'
 	$
 
-如果一切顺利，bitcoind就编译好了。最后的步骤是将bitcoind安装到系统路径中，仍然使用*make*命令：
+顺利的话，bitcoind就编译好了。最后的步骤是将bitcoind安装到系统路径中，仍然使用*make*命令：
 
 	$ sudo make install
 	Making install in src
@@ -192,7 +191,7 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	$ which bitcoin-cli
 	/usr/local/bin/bitcoin-cli
 
-默认安装下，bitcoind安装于*/usr/local/bin*目录下。当你第一次运行bitcoind时，它会提醒你创建一个配置文件，这个配置文件包含访问JSON-RPC接口的高强度密码。键入*bitcoind*在终端上运行bitcoind：
+默认安装时，bitcoind会被安装到*/usr/local/bin*目录下。当你第一次运行bitcoind时，它会提醒你创建一个配置文件，这个配置文件包含访问JSON-RPC接口的高强度密码。键入*bitcoind*在终端上运行bitcoind：
 
 	$ bitcoind
 	Error: To use the "-server" option, you must set a rpcpassword in the configuration file:
@@ -206,14 +205,14 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	It is also recommended to set alertnotify so you are notified of problems;
 	for example: alertnotify=echo %s | mail -s "Bitcoin Alert" admin@foo.com
 
-在你喜欢的编辑器中编辑配置文件，设置参数，将密码替换为一个bitcoind建议的高强度密码。不要使用范例中使用的密码。在*.bitcoin*目录下创建一个命名为*./bitcoind/bitcoin.conf*的配置文件，输入用户名和密码：
+在你喜欢的编辑器中编辑配置文件，设置参数，将密码替换为一个bitcoind建议的高强度密码。**不要**使用范例中使用的密码。在*.bitcoin*目录下创建一个命名为*.bitcoind/bitcoin.conf*的配置文件，输入用户名和密码：
 
 	rpcuser=bitcoinrpc
 	rpcpassword=2XA4DuKNCbtZXsBQRRNDEwEY2nM6M4H9Tx5dFjoAVVbK
 
-当你编辑这个配置文件时，你可能还希望设置几个其他选项，比如*txindex*（参见第47页《交易数据库索引和txindex选项）。若需要查看所有可用选项，请键入*bitcoind --help*。
+当你编辑这个配置文件时，你可能还希望设置其他几个选项，比如*txindex*（参见第47页《交易数据库索引和txindex选项）。若需要查看所有可用选项，请键入*bitcoind --help*。
 
-现在，运行比特币核心客户端。第一次运行时，它会通过下载所有区块来重建比特币区块链。这是一个好几个G的大文件，平均需要花费两天才能全量下载。你可以利用BitTorrent客户端从SourceForge下载部分区块链副本来缩短区块链初始化时间。
+现在，运行比特币核心客户端。第一次运行时，它会通过下载所有区块来重建比特币区块链。这是一个好几G的大文件，平均需要花费两天才能全量下载完成。你可以利用BitTorrent客户端从SourceForge下载部分区块链副本来缩短区块链初始化时间。
 
 通过*-daemon*选项可以在后台运行bitcoind:
 
@@ -234,9 +233,9 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	Opened LevelDB successfully
 	[... more startup messages ...]
 
-#通过命令行调用比特币核心的JSON-RPC接口
+# 通过命令行调用比特币核心的JSON-RPC接口
 
-比特币核心客户端实现了一个可供命令行助手*bitcoin-cli*调用的JSON-RPC接口。这使我们得以实验性的访问那些通常由程序通过API调用的功能。开始前，我们先调用help命令来看一下全部可用的RPC命令列表：
+比特币核心客户端实现了一个可供命令行助手*bitcoin-cli*调用的JSON-RPC接口。这使我们可以实验那些通常由程序通过API调用的功能。开始前，我们先调用help命令来看一下全部可用的RPC命令列表：
 
 	$ bitcoin-cli help
 	addmultisigaddress nrequired ["key",...] ( "account" )
@@ -315,11 +314,11 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	walletpassphrase "passphrase" timeout
 	walletpassphrasechange "oldpassphrase" "newpassphrase"
 
-##从比特币核心客户端的状态中获取消息
+## 从比特币核心客户端的状态中获取消息
 
 命令：*getinfo*
 
-比特币的*getinfo* RPC命令显示比特币网络节点、钱包、区块链数据库状态的基础信息，使用*bitcoin-cli来运行：
+比特币的*getinfo* RPC命令显示比特币网络节点、钱包、区块链数据库状态的基础信息，运行*bitcoin-cli getinfo*：
 
 	$ bitcoin-cli getinfo
 	{
@@ -339,11 +338,11 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 		"errors" : ""
 	}
 
-数据以JavaScript对象符号（JSON）格式返回，这种格式不仅可以轻易被编程语言“消费”，对人来说，也是易于阅读的。在数据中，我们可以看到比特币软件客户端的版本号（90000），协议版本号（70002），钱包版本（60000）。我们也可以看到钱包的余额，当前为0。还能看到区块高度，告诉我们客户端总共看到了多少区块（286216）。我们也看到各种有关比特币网络和当前客户端相关设置的统计信息。我们将在本章剩余部分更详细的了解这些设置。
+数据以JavaScript对象符号（JSON）格式返回，这种格式不仅可以轻易被编程语言“消费”，也便于人工阅读。在数据中，我们可以看到比特币客户端的版本号（90000），协议版本号（70002），钱包版本号（60000）。也能看到钱包的余额，当前为0。还能看到区块高度，告诉我们客户端总共看到了多少区块（当前286,216）。另外，返回信息中还包含各种比特币网络相关的统计数据以及当前客户端相关的设置信息。我们将在本章剩余部分更详细的了解这些设置。
 
-![notes](notes.png)这将需要一些时间，也许超过一天，等待bitcoind客户端从其他比特币客户端下载区块，以“追赶上”当前的区块链高度。你可以通过getinfo查看已知的区块来检查进度。
+![notes](notes.png)这将需要一些时间，也许超过一天，等待bitcoind客户端从其他比特币客户端下载区块，以“追赶上”当前的区块链高度。你可以通过getinfo查看已知的区块来检查同步进度。
 
-##钱包设置和加密
+## 钱包设置和加密
 
 命令：*encryptwallet, walletpassphrase*
 
@@ -353,7 +352,7 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	wallet encrypted; Bitcoin server stopping, restart to run with encrypted wallet. The keypool has been flushed, you need to make a new backup.
 	$
 
-你可以重新运行*getinfo*来检查钱包是否已经加密。这次，你会注意到有个新的条目叫*unlocked_until*。这是一个计数器，显示钱包解密密码在内存中存储，保持钱包解锁状态的时间。首先，这个会被设为0，代表钱包是被锁定的：
+你可以重新运行*getinfo*来检查钱包是否已经加密。这次，你会注意到有个新的条目叫*unlocked_until*。这是一个计数器，显示钱包解密密码在内存中存储，保持钱包解锁状态的时间。最初，计数器会被设为0，代表钱包是被锁定的：
 
 	$ bitcoin-cli getinfo
 	{
@@ -379,20 +378,21 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 		"errors" : ""
 	}
 
-##钱包备份，明文导出，恢复
+## 钱包备份，明文导出，恢复
+
 命令：*backupwallet, importwallet, dumpwallet*
 
-接下来，我们练习创建钱包备份文件，然后从备份文件中恢复钱包。使用*backupwallet*命令来备份，提供文件名作为命令参数。这里，我们将钱包备份到文件*wallet.backup*中：
+接下来，我们练习创建钱包备份文件，然后从备份文件中恢复钱包。使用*backupwallet*命令来备份，提供文件名作为命令的参数。这里，我们将钱包备份到文件*wallet.backup*中：
 
 	$ bitcoin-cli backupwallet wallet.backup
 	$
 
-现在，利用*importwallet*来从备份文件中恢复钱包。如果钱包是锁定状态的，你需要先进行解锁（在接下来的章节中查看*walletpassphrase*）。
+现在，利用*importwallet*从备份文件中恢复钱包。如果钱包是锁定状态的，你需要先进行解锁（在上节可以查看*walletpassphrase*命令用法）。
 
 	$ bitcoin-cli importwallet wallet.backup
 	$
 
-*dumpwallet*命令可用于将钱包导出到人眼可读的文本文件：
+*dumpwallet*命令用于将钱包导出到人类可读的文本文件：
 
 	$ bitcoin-cli dumpwallet wallet.txt
 	$ more wallet.txt
@@ -407,23 +407,23 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	
 	$
 
-##钱包地址和接收交易
+## 钱包地址和接收交易
 
 命令：*getnewaddress, getreceivedbyaddress, listtransactions, getaddressesbyaccount, getbalance*
 
-比特币参考客户端维护着一个地址池，这个大小在命令*getinfo*的输出项*keypoolsize*中展示。这些地址是自动生成，可用于公共接收地址或者零钱地址。为取得一个这种地址，使用*getnewaddress*命令：
+比特币参考客户端维护着一个地址池，地址池的大小在命令*getinfo*的输出项*keypoolsize*中展示。这些地址是自动生成，可用于公开接收地址或者找零地址。使用*getnewaddress*命令，可以生成一个新地址：
 
 	$ bitcoin-cli getnewaddress
 	1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL
 
-现在，我们可以从外部钱包（假设你在交易所，网络钱包或者在其他地方运行的bitcoind钱包中已经拥有一些比特币），通过地址发送一笔小额的比特币到我们的bitcoind钱包。在这个例子中，我们将发送50毫比特（0.050比特币）到之前这个地址。
+现在，我们可以从外部钱包（假设你在交易所、网络钱包或者在其他地方运行的bitcoind钱包中已经拥有一些比特币），通过这个地址发送一笔小额的比特币到我们的bitcoind钱包。在这个例子中，我们将发送50毫比特（0.050比特币）到这个地址。
 
-我们现在可以询问bitcoind客户端通过这个地址接收到比特币金额，指定需要多少次确认，一笔资金才计入余额中，我们将指定0确认。从另一个钱包发送比特币几秒后，我们将看到它在钱包中反映出来。我们使用*getreceivedbyaddress*命令并结合地址以及0确认次数来查看：
+我们可以询问bitcoind客户端此地址已经接收到的比特币金额，查询时，需要指定确认次数，即多少次确认一笔资金才计入余额中，在这里，我们指定0次确认。从另一个钱包发送比特币几秒后，我们就可以看到，交易已经在钱包的余额中体现出来了。现在，我们使用*getreceivedbyaddress*命令并结合地址以及0确认次数来查看：
 
 	$ bitcoin-cli getreceivedbyaddress 1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL 0
 	0.050000
 
-如果省略掉命令最后一个0，我们将只能看到经过至少*minconf*次确认的金额，*minconf*是最少确认次数的设置值，未达到这个确认次数，交易不会计入余额。*minconf*设置值是在bitcoind配置文件中设置的。因为发送这个比特币的交易仅仅发生在几秒前，它尚未被确认，所以我们看到它只列出了一个0余额：
+如果省略掉命令最后一个0，我们将只能看到经过至少*minconf*次确认的金额，*minconf*是最少确认次数的设置值，未达到这个确认次数，交易不会计入余额。*minconf*的值是在bitcoind配置文件中设置的。因为发送这个比特币的交易仅仅发生在几秒前，它尚未被确认，所以我们看到它只列出了一个0余额：
 
 	$ bitcoin-cli getreceivedbyaddress 1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL
 	0.00000000
@@ -468,7 +468,13 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	$ bitcoin-cli getbalance
 	0.05000000
 
-现在，我们来看看前面利用*gettransaction*命令列出的传入交易。我们可以通过交易哈希值提取到一笔交易，在*gettransaction*命令中，它是*txid*的值。
+![notes](notes.png)如果交易尚未确认，getbalance命令返回的余额是0。“*minconf*”选项决定了需要经过几次确认，交易金额才会体现到余额上。
+
+## 探索及解码交易
+
+命令：*gettransaction、getrawtransaction、decoderawtransaction*
+
+现在，我们来看看前面利用*gettransaction*命令列出的传入交易。我们可以通过交易哈希提取到一笔交易，交易哈希就是前面我们看到的*txid*，提取交易的命令为：*gettransaction*。
 
 	$ bitcoin-cli gettransaction 9ca8f969bd3ef5ec2a8685660fdbf7a8bd365524c2e1fc66c309acbae2c14ae3
 	{
@@ -487,9 +493,9 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	    ]
 	}
 
-![notes](notes.png)在未确认前交易ID不具有权威性。区块链中交易哈希值缺失不意味着交易未被执行。这被称之为“交易可塑性性”，因为交易哈希可以在区块确认前被修改。一旦确认，*txid*就是不变的，权威的。
+![notes](notes.png)在未确认前，交易ID不具有权威性。区块链中交易哈希缺失不意味着交易未被执行。这被称之为“交易可锻性”，因为交易哈希可以在区块确认前被修改。一旦确认，*txid*就是不变的，权威的。
 
-通过命令*gettransaction*显示的交易形式是一种简化的形式。为了获取完整交易代码并解码它，我们需要利用两个命令：*getrawtransaction*和*decoderawtransaction*。首先，*getrawtransaction*取交易哈希（*txid*）作为参数，并返回一个“原始”的十六进制字符串，就像它在比特币网络上的样子。
+通过命令*gettransaction*显示的交易形式是一种简化的形式。为了获取完整交易代码并解码它，我们需要利用两个命令：*getrawtransaction*和*decoderawtransaction*。首先，使用命令*getrawtransaction*，并以交易哈希（*txid*）作为参数，将返回一个“原始”的十六进制字符串，就像它在比特币网络上的样子。
 
 	$ bitcoin-cli getrawtransaction 9ca8f969bd3ef5ec2a8685660fdbf7a8bd365524c2e1fc66
 	c309acbae2c14ae3
@@ -502,16 +508,9 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	b518fa2e6089fd810235cf1100c9c13d1fd288ac1f312906000000001976a914107b7086b3151893
 	5c8d28703d66d09b3623134388ac00000000
 
-为了解码这些十六进制字符串，需要使用*decoderawtransaction*命令。拷贝粘贴这些十六进制作为*decoderawtransaction*的第一个参数，获取完整的以JSON数据结构解析的内容。（出于格式化需要，十六进制字符串在以下例子中被截短了）：
+为了解码这个十六进制字符串，需要使用*decoderawtransaction*命令。拷贝粘贴这些十六进制作为命令*decoderawtransaction*的第一个参数，就得到了完整的以JSON数据格式表示的内容。（出于格式化需要，十六进制字符串在以下例子中被截短了）：
 
-	$ bitcoin-cli decoderawtransaction 0100000001d717279515f88e2f56ce4e8a31e2ae3e9f00
-	ba1d0add648e80c480ea22e0c7d3000000008b483045022100a4ebbeec83225dedead659bbde7da3d
-	026c8b8e12e61a2df0dd0758e227383b302203301768ef878007e9ef7c304f70ffaf1f2c975b192d3
-	4c5b9b2ac1bd193dfba2014104793ac8a58ea751f9710e39aad2e296cc14daa44fa59248be58ede65
-	e4c4b884ac5b5b6dede05ba84727e34c8fd3ee1d6929d7a44b6e111d41cc79e05dbfe5ceaffffffff
-	02404b4c00000000001976a91407bdb518fa2e6089fd810235cf1100c9c13d1fd288ac1f312906000
-	000001976a914107b7086b31518935c8d28703d66d09b3623134388ac00000000
-
+	$ bitcoin-cli decoderawtransaction 0100000001d717...388ac00000000
 	{
 	    "txid" : "9ca8f969bd3ef5ec2a8685660fdbf7a8bd365524c2e1fc66c309acbae2c14ae3",
 	    "version" : 1,
@@ -557,11 +556,11 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	    ]
 	}
 
-这里的交易解码显示了一个交易的所有组成元素，包括交易输入和输出。在这个例子中，我们看到交易往我们的新地址记录50毫比特，使用了一个输入生成了两个输出。这个交易的输入是从上一笔已确认交易的输出（显示为*vin*下*d3c7*开始的*txid*）。两个输出一个是50毫比特的入账，另一笔是交易找零。
+这个JSON格式的输出展示了一个交易的所有组成元素，包括交易输入和输出。在这个例子中，我们看到交易使用了一个输入生成了两个输出，往我们的新地址记入了50毫比特。这个交易的输入是上一笔已确认交易的输出（显示为*vin*下*d3c7*开始的*txid*）。两个输出一个是50毫比特的入账，另一笔是交易找零。
 
 我们可以使用同样的命令（*gettransaction*），通过查看txid引用的交易进一步对区块链进行探索。如此一级一级循着交易链条，我们可以看到资金一次又一次的从一个所有者地址转移到另一个所有者地址。
 
-一旦我们接收到通过并入区块而被确认的交易，*gettransaction*命令将返回更多信息，显示交易所在的区块哈希（标识符）：
+如果接收到交易已经被确认，*gettransaction*命令还将额外返回交易所在区块的*区块哈希（标识符）*：
 
 	$ bitcoin-cli gettransaction 9ca8f969bd3ef5ec2a8685660fdbf7a8bd365524c2e1fc66↵
 	c309acbae2c14ae3
@@ -585,17 +584,17 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 		]
 	}
 
-在这儿，我们看到输出项中多了区块哈希（交易所在区块的哈希值）和值为18的区块索引（指出此交易是区块内的第18个交易）
+在这儿，我们看到输出项中多了一个blockhash条目（区块哈希，交易所在区块的哈希值）和值为18的blockindex条目（区块索引，指出此交易是区块内的第18个交易）
 
 |交易数据库索引和txindex选项|
-----|----
-默认情况下，比特币核心创建一个仅包含与用户钱包相关的交易的数据库。如果你希望访问所有类似gettransaction等命令能查看的交易，你需要配置比特币核心客户端，使其创建一个完整的交易索引。这可以通过设置txindex选项来实现。在比特币核心的配置文件（该文件通常位于你的Home目录下的*.bitcoin/bitcoin.conf*）中将txindex设置为1.一旦你修改了参数，你需要重启bitcoind并等待其完成索引创建|
+|----|
+|默认情况下，比特币核心创建一个仅包含与用户钱包相关的交易数据库。如果你希望访问所有类似gettransaction等命令能查看的交易，你需要配置比特币核心客户端，使其创建一个完整的交易索引。这可以通过设置txindex选项来实现。在比特币核心的配置文件（该文件通常位于你的Home目录下的*.bitcoin/bitcoin.conf*）中将txindex设置为1.一旦你修改了参数，你需要重启bitcoind并等待其完成索引创建|
 
-#探索区块
+## 探索区块
 
 命令：*getblock, getblockhash*
 
-现在我们已经知道交易位于哪个区块内，我们可以查询该区块。使用*getblock*命令并以区块哈希值作为参数：
+现在我们已经知道交易位于哪个区块内，我们可以查询该区块。使用*getblock*命令并以区块哈希作为参数：
 
 	$ bitcoin-cli getblock 000000000000000051d2e759c63a26e247f185ecb7926ed7a6624bc31c2a717b true
 	{
@@ -639,10 +638,10 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 
 我们也可以利用*getblockhash*命令，根据区块的高度来获取区块信息。这种情况下，我们使用区块高度作为参数，返回区块哈希：
 
-	$ bitcoin-cli getblockhash  0000000000019d6689c085ae165831e934ff763ae46a2a6c17
-	2b3f1b60a8ce26f
+	$ bitcoin-cli getblockhash   0
+	000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 
-这里，我们将取得创世区块的哈希值，它是中本聪挖到的第一个区块，其高度为0。获取的信息如下：
+这里，我们取得了创世区块的哈希，它是中本聪挖到的第一个区块，其高度为0。进一步获取区块的详细信息如下：
 
 	$ bitcoin-cli getblock 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 	{
@@ -665,11 +664,11 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 
 *getblock,getblockhash*以及*gettransaction*命令也可用于程序中查询区块链数据库。
 
-#创建，签名，基于为花费输出提交交易
+## 基于未花费的交易输出创建、签名、提交交易
 
 命令：*listunspent, gettxout, createrawtransaction, decoderawtransaction, signrawtransaction, sendrawtransaction*
 
-比特币的交易是基于花费”输出”的概念，“输出”是前序交易的结果，创建了一个价值在所有者地址间进行传递的交易链条。我们的钱包现在接收到了一个交易，它的一个输出是指向我们的地址的。一旦这个交易被确认，我们就能花费这个输出。
+比特币的交易是基于花费“输出”的概念，“输出”是前序交易的结果，由此创建了一个在所有者地址间的价值传递的交易链。我们的钱包现在接收到了一个交易，它将一个输出分配给我们的地址。一旦这个交易被确认，我们就能花费这个输出。
 
 首先：我们利用*listunspent*命令来显示我们钱包中的未花费*已确认*的交易输出:
 
@@ -686,9 +685,9 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 		 }
 	]
 
-我们看到交易9ca8f9...创建了一个交易(vout索引为0)，为地址1hvzSo计入50毫比特，这个时刻，该交易已经经过7次确认。交易使用前序交易创建的输出作为它的输入，通过引用前序交易的txid和vout索引形成与前序交易的连接。我们现在可以创建一个新的交易来花费txid为9ca8f9...的第0个输出（vout=0），在这个交易中，我们将把上述交易的输出作为新交易的输入，并将它发给一个新的地址。
+我们看到交易9ca8f9...创建了一个输出(vout索引号为0)，为地址1hvzSo...存入50毫比特，这个时刻，该交易已经经过7次确认。交易使用前序交易创建的输出作为它的输入，通过引用前序交易的txid和vout索引形成与前序交易的连接。我们现在可以创建一个新的交易来花费txid为9ca8f9...的第0个输出（vout=0），在这个交易中，我们将把上述交易的输出作为新交易的输入，并将它发给一个新的地址。
 
-首先，我们更详细的查看一下特定的交易输出。我们使用*gettxout*来获取这个未花费输出。交易输出总是通过txid和vout被引用，这也是我们传给*gettxout*的参数：
+首先，我们更详细的查看这个交易的输出。我们使用*gettxout*来获取这个未花费输出。交易输出总是通过txid和vout被引用，这也是我们传给*gettxout*的参数：
 
 	$ bitcoin-cli gettxout 9ca8f969bd3ef5ec2a8685660fdbf7a8bd365524c2e1fc66c309acbae2c14ae3 0
 	{
@@ -714,7 +713,7 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	$ bitcoin-cli getnewaddress
 	1LnfTndy3qzXGN19Jwscj1T8LR3MVe3JDb
 
-我们将发送25毫比特到这个我们钱包中新创建的地址（1LnfTn...)。在新交易中，我们将花费50毫比特的输出，并且发送25毫比特到这个新地址。由于我们必须花费前序交易的*整个*输出，所以交易还会产生一部分找零。我们将找零发送回原地址（1hvz...)。最后，我们还需要发送一些交易费用。为了发送费用，我们将把找零的数额减少0.5毫比特，仅找回24.5毫比特。交易输出汇总额（25mBTC+24.5mBTC=49.5mBTC）与输入（50mBTC)的差值将会作为交易费用被旷工收集走。
+我们将发送25毫比特到这个新创建的地址（1LnfTn...)。在新交易中，我们将花费50毫比特的输出，并且发送25毫比特到这个新地址。由于我们必须花费前序交易的*整个*输出，所以交易还会产生一部分找零。我们将找零发送回原地址（1hvz...)。最后，我们还需要发送一些交易费用。为了发送费用，我们把找零的数额减少0.5毫比特，仅找回24.5毫比特。交易输出的总额为（25mBTC+24.5mBTC=49.5mBTC）与输入（50mBTC)的差额将会作为交易费用被矿工收集走。
 
 我们使用*createrawtransaction*来创建这个交易。作为参数，我们提供交易输入（已确认交易的50毫比特未花费输出），以及2个交易输出（发往新地址的资金和返回发送者自身地址的交易找零）：
 
@@ -771,9 +770,9 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 	 ]
 	}
 
-看起来像是正确的！我们的新交易“消费”了我们的已确认交易中的未花费输出，并将其拆分为两个输出，一个是25毫比特，发到我们新地址，另一个24.5毫比特作为交易找零返回原地址。0.5毫比特的差额作为交易费用，将发给找到包含本交易的区块的旷工。
+看起来像是正确的！我们的新交易“花费”了我们的已确认交易中的未花费输出，并将其拆分为两个输出，一个是25毫比特，发到我们新地址，另一个24.5毫比特作为交易找零返回原地址。0.5毫比特的差额作为交易费用，将发给找到找到包含本交易区块的矿工。
 
-就像你可能注意到的那样，交易包含一个空的*scriptSig*(脚本签名），因为我们尚未对其签名。没有签名，一笔交易毫无意义；我们尚未证明未花费输出的地址是我们拥有的。通过签名，我们移除了输出的保护罩，证明了我们确实拥有这笔输出，并且能够使用它。我们使用*signrawtransaction*命令来签名交易。它以原始交易的十六进制字符串作为参数。
+就像你可能注意到的那样，交易包含一个空的*scriptSig*(脚本签名），因为我们尚未对其签名。没有签名，一笔交易是毫无意义的；因为我们尚未证明我们*拥有*未花费输出的地址。通过签名，我们移除了输出的阻碍，证明了我们确实拥有这笔输出，并且能够使用它。我们使用*signrawtransaction*命令来签名交易。它以原始交易的十六进制字符串作为参数。
 
 ![notes](notes.png)一个加密的钱包必须先进行解锁才能对交易进行签名，因为签名需要访问钱包中的密钥。
 
@@ -786,71 +785,54 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 
 *signrawtransaction*命令返回另外一个十六进制编码的原始交易。我们解码看看有什么变化：
 
-	$ bitcoin-cli decoderawtransaction0100000001e34ac1e2baac09c366fce1c2245536bda↵
-	8f7db0f6685862aecf53ebd69f9a89c000000006a47304402203e8a16522da80cef66bacfbc0c↵
-	800c6d52c4a26d1d86a54e0a1b76d661f020c9022010397f00149f2a8fb2bc5bca52f2d7a7f87↵
-	e3897a273ef54b277e4af52051a06012103c9700559f690c4a9182faa8bed88ad8a0c563777ac↵
-	1d3f00fd44ea6c71dc5127ffffffff02a0252600000000001976a914d90d36e98f62968d2bc9b↵
-	bd68107564a156a9bcf88ac50622500000000001976a91407bdb518fa2e6089fd810235cf1100↵
-	c9c13d1fd288ac00000000
 	{
-	 "txid" : "ae74538baa914f3799081ba78429d5d84f36a0127438e9f721dff584ac17b34↵
-	6",
-	 "version" : 1,
-	 "locktime" : 0,
-	 "vin" : [
-	 {
-	 "txid" : "9ca8f969bd3ef5ec2a8685660fdbf7a8bd365524c2e1fc66c309acb↵
-	ae2c14ae3",
-	 "vout" : 0,
-	 "scriptSig" : {
-	 "asm" : "304402203e8a16522da80cef66bacfbc0c800c6d52c4a26d1d86↵
-	a54e0a1b76d661f020c9022010397f00149f2a8fb2bc5bca52f2d7a7f87e3897a273ef54b277e↵
-	4af52051a0601 03c9700559f690c4a9182faa8bed88ad8a0c563777ac1d3f00fd44ea6c71dc5↵
-	127",
-	"hex" : "47304402203e8a16522da80cef66bacfbc0c800c6d52c4a26d1d↵
-	86a54e0a1b76d661f020c9022010397f00149f2a8fb2bc5bca52f2d7a7f87e3897a273ef54b27↵
-	7e4af52051a06012103c9700559f690c4a9182faa8bed88ad8a0c563777ac1d3f00fd44ea6c71↵
-	dc5127"
-	 },
-	 "sequence" : 4294967295
-	 }
-	 ],
-	 "vout" : [
-	 {
-	 "value" : 0.02500000,
-	 "n" : 0,
-	 "scriptPubKey" : {
-	 "asm" : "OP_DUP OP_HASH160 d90d36e98f62968d2bc9bbd68107564a15↵
-	6a9bcf OP_EQUALVERIFY OP_CHECKSIG",
-	 "hex" : "76a914d90d36e98f62968d2bc9bbd68107564a156a9bcf88ac",
-	 "reqSigs" : 1,
-	 "type" : "pubkeyhash",
-	 "addresses" : [
-	 "1LnfTndy3qzXGN19Jwscj1T8LR3MVe3JDb"
-	 ]
-	 }
-	 },
-	 {
-	 "value" : 0.02450000,
-	 "n" : 1,
-	 "scriptPubKey" : {
-	 "asm" : "OP_DUP OP_HASH160 07bdb518fa2e6089fd810235cf1100c9c1↵
-	3d1fd2 OP_EQUALVERIFY OP_CHECKSIG",
-	 "hex" : "76a91407bdb518fa2e6089fd810235cf1100c9c13d1fd288ac",
-	 "reqSigs" : 1,
-	 "type" : "pubkeyhash",
-	 "addresses" : [
-	 "1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL"
-	 ]
-	 }
-	 }
-	 ]
+	    "txid" : "ae74538baa914f3799081ba78429d5d84f36a0127438e9f721dff584ac17b346",
+	    "version" : 1,
+	    "locktime" : 0,
+	    "vin" : [
+	        {
+	            "txid" : "9ca8f969bd3ef5ec2a8685660fdbf7a8bd365524c2e1fc66c309acbae2c14ae3",
+	            "vout" : 0,
+	            "scriptSig" : {
+	                "asm" : "304402203e8a16522da80cef66bacfbc0c800c6d52c4a26d1d86a54e0a1b76d661f020c9022010397f00149f2a8fb2bc5bca52f2d7a7f87e3897a273ef54b277e4af52051a0601 03c9700559f690c4a9182faa8bed88ad8a0c563777ac1d3f00fd44ea6c71dc5127",
+	                "hex" : "47304402203e8a16522da80cef66bacfbc0c800c6d52c4a26d1d86a54e0a1b76d661f020c9022010397f00149f2a8fb2bc5bca52f2d7a7f87e3897a273ef54b277e4af52051a06012103c9700559f690c4a9182faa8bed88ad8a0c563777ac1d3f00fd44ea6c71dc5127"
+	            },
+	            "sequence" : 4294967295
+	        }
+	    ],
+	    "vout" : [
+	        {
+	            "value" : 0.02500000,
+	            "n" : 0,
+	            "scriptPubKey" : {
+	                "asm" : "OP_DUP OP_HASH160 d90d36e98f62968d2bc9bbd68107564a156a9bcf OP_EQUALVERIFY OP_CHECKSIG",
+	                "hex" : "76a914d90d36e98f62968d2bc9bbd68107564a156a9bcf88ac",
+	                "reqSigs" : 1,
+	                "type" : "pubkeyhash",
+	                "addresses" : [
+	                    "1LnfTndy3qzXGN19Jwscj1T8LR3MVe3JDb"
+	                ]
+	            }
+	        },
+	        {
+	            "value" : 0.02450000,
+	            "n" : 1,
+	            "scriptPubKey" : {
+	                "asm" : "OP_DUP OP_HASH160 07bdb518fa2e6089fd810235cf1100c9c13d1fd2 OP_EQUALVERIFY OP_CHECKSIG",
+	                "hex" : "76a91407bdb518fa2e6089fd810235cf1100c9c13d1fd288ac",
+	                "reqSigs" : 1,
+	                "type" : "pubkeyhash",
+	                "addresses" : [
+	                    "1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL"
+	                ]
+	            }
+	        }
+	    ]
 	}
 
-现在，交易中的输入包含了*scriptSig*，这是一个地址（1hvz...）拥有者提供的数字签名，解除了原交易输出上的保护，输出得以使用。签名使得交易可以被比特币网络上的任何节点进行确认。
+现在，交易中的输入包含了*scriptSig*，这是一个地址（1hvz...）拥有者提供的数字签名，解除了原交易输出上的阻碍，输出得以使用。签名使得交易可以被比特币网络上的任何节点进行确认。
 
-是时候将这个新交易提交到网络了。我们使用*sendrawtransaction*命令，该命令以上述已签名的交易的原始十六进制字符串作为参数，也就是刚刚我们解码的字符串。
+是时候将这个新交易提交到网络了。我们使用*sendrawtransaction*命令，该命令以上述已签名交易的原始十六进制字符串作为参数，也就是刚刚我们解码的字符串。
 
 	$ bitcoin-cli sendrawtransaction0100000001e34ac1e2baac09c366fce1c2245536bda8f↵
 	7db0f6685862aecf53ebd69f9a89c000000006a47304402203e8a16522da80cef66bacfbc0c80↵
@@ -863,50 +845,48 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 
 当交易提交到网络后，命令*sendrawtransaction*返回一个交易哈希(txid)。我们可以利用*gettransaction*命令来查询这个交易ID：
 
-	$ bitcoin-cli gettransaction ae74538baa914f3799081ba78429d5d84f36a0127438e9f7↵
-	21dff584ac17b346
 	{
-	 "amount" : 0.00000000,
-	 "fee" : -0.00050000,
-	 "confirmations" : 0,
-	 "txid" : "ae74538baa914f3799081ba78429d5d84f36a0127438e9f721dff584ac17b346" ,
-	 "time" : 1392666702,
-	 "timereceived" : 1392666702,
-	 "details" : [
-	 {
-	 "account" : "" ,
-	 "address" : "1LnfTndy3qzXGN19Jwscj1T8LR3MVe3JDb" ,
-	 "category" : "send" ,
-	 "amount" : -0.02500000,
-	 "fee" : -0.00050000
-	 },
-	 {
-	 "account" : "" ,
-	 "address" : "1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL" ,
-	 "category" : "send" ,
-	 "amount" : -0.02450000,
-	 "fee" : -0.00050000
-	 },
-	 {
-	 "account" : "" ,
-	 "address" : "1LnfTndy3qzXGN19Jwscj1T8LR3MVe3JDb" ,
-	 "category" : "receive" ,
-	 "amount" : 0.02500000
-	 },
-	 {
-	 "account" : "" ,
-	 "address" : "1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL" ,
-	 "category" : "receive" ,
-	 "amount" : 0.02450000
-	 }
-	 ]
+	    "amount" : 0.00000000,
+	    "fee" : -0.00050000,
+	    "confirmations" : 0,
+	    "txid" : "ae74538baa914f3799081ba78429d5d84f36a0127438e9f721dff584ac17b346",
+	    "time" : 1392666702,
+	    "timereceived" : 1392666702,
+	    "details" : [
+	        {
+	            "account" : "",
+	            "address" : "1LnfTndy3qzXGN19Jwscj1T8LR3MVe3JDb",
+	            "category" : "send",
+	            "amount" : -0.02500000,
+	            "fee" : -0.00050000
+	        },
+	        {
+	            "account" : "",
+	            "address" : "1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL",
+	            "category" : "send",
+	            "amount" : -0.02450000,
+	            "fee" : -0.00050000
+	        },
+	        {
+	            "account" : "",
+	            "address" : "1LnfTndy3qzXGN19Jwscj1T8LR3MVe3JDb",
+	            "category" : "receive",
+	            "amount" : 0.02500000
+	        },
+	        {
+	            "account" : "",
+	            "address" : "1hvzSofGwT8cjb8JU7nBsCSfEVQX5u9CL",
+	            "category" : "receive",
+	            "amount" : 0.02450000
+	        }
+	    ]
 	}
 
 就像之前看到的，我们依然可以使用*getrawtransaction*和*decodetransaction*命令查看更详细信息。它们返回的信息与交易提交网络前看到的是一样的。
 
-#替代客户端，库，工具集
+# 替代客户端，库，工具集
 
-除了参考客户端（bitcoind），其它客户端和库也能用来与比特币网络和其数据结构交互。这里是一些通过不同语言实现的客户端，提供了它们语言的本地化接口。
+除了参考客户端（bitcoind），其它客户端和库也能用来与比特币网络及其数据结构进行交互。这里是一些通过不同语言实现的客户端，提供了相应语言的本地化接口。
 
 *libbitcoin和sx工具集*
 
@@ -936,23 +916,26 @@ configure脚本允许你通过使用--enable-FEATURE或--disable-FEATURE标志�
 
 	另一个Python比特币库
 
-还有很多其他各种语言实现的库，同时更多的库正在被开发。
+还有很多其他各种语言实现的库，同时还有更多的库正在开发中。
 
-##libbitcoin和sx工具集
-libbitcoin库是一个C++的可扩展多线程，模块化的实现，它支持完全节点客户端，它还带一个命令行工具集，叫做sx，这个工具集提供很多与我们在本章中展示过的bitcoind客户端命令行一样的功能。sx工具集还提供一些bitcoind未提供的密钥管理和维护工具，包括type-2确定性密钥和密钥助记符功能。
+## libbitcoin和sx工具集
 
-###安装sx
+libbitcoin库是一个C++的可扩展多线程、模块化的实现，它支持完全节点客户端，它还带一个命令行工具集，叫做sx，这个工具集提供很多与我们在本章中展示过的bitcoind客户端命令行一样的功能。sx工具集还提供一些bitcoind未提供的密钥管理和维护工具，包括type-2确定性密钥和密钥助记符功能。
+
+### 安装sx
+
 为了安装sx以及其支持库libbitcoin，在Linux系统上下载并安装在线安装包：
 
 	$ wget http://sx.dyne.org/install-sx.sh
 	$ sudo bash ./install-sx.sh
 
-现在，sx工具集一种安装好了，键入不带参数的sx命令打印帮助文档，这会列出所有可用命令（参看附录D）
+现在，sx工具集已经安装好了，键入不带参数的sx命令打印帮助文档，这会列出所有可用命令（参看附录D）
 
-![notes](notes.png)sx工具集提供许多实用的命令来对地址进行编码或解码，也可以将它们的格式或者表现方式互相转换。可以利用它们来探索各种不同的格式，比如Base58，Base58Check，十六进制，等等。
+![notes](notes.png)sx工具集提供了许多实用命令来对地址进行编码或解码，也可以将它们的格式或者表现方式互相转换。可以利用它们来探索各种不同的格式，比如Base58，Base58Check，十六进制，等等。
 
-##pycoin
-Python库pycoin，最早由理查德.吉斯开发和维护，是一个基于python的库，它支持操作比特币密钥和交易，甚至也支持使用脚本语言来正确处理非标准交易。
+## pycoin
+
+Python库pycoin，最早由理查德.吉斯（Richard Kiss）开发和维护，是一个基于python的库，它支持操作比特币密钥和交易，甚至也支持使用脚本语言来正确处理非标准交易。
 
 pycoin库支持Python 2（2.7.x）和Python 3（3.3之后版本），同时还随带了一些好用的命令行工具，*ku*和*tx*。在python 3的虚拟环境（venv）安装pycoin 0.42的步骤如下：
 
@@ -1023,7 +1006,7 @@ pycoin库支持Python 2（2.7.x）和Python 3（3.3之后版本），同时还�
 
 命令行工具*ku*和*tx*的例子参看附录B。
 
-##btcd
+## btcd
 
 btcd是一个Go语言开发的完全节点比特币工具。目前，它的下载、验证、服务区块链采用的区块验证规则与参考实现bitcoind完全一致（甚至bug也一致）。它同样正确中继新挖出的区块，维护交易池，中继尚未进入区块的交易。它确保获准进入交易池的交易严格遵守要求的规则以及大多数矿工提出的更为严格的过滤原则（“标准”交易）。
 
