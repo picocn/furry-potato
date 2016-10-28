@@ -1008,11 +1008,11 @@ pycoin库支持Python 2（2.7.x）和Python 3（3.3之后版本），同时还�
 
 ## btcd
 
-btcd是一个Go语言开发的完全节点比特币工具。目前，它的下载、验证、服务区块链的规则与参考实现bitcoind接受区块的规则完全一致（甚至bug也一致）。它同样能够正确中继新挖出的区块，维护一个交易池，中转尚未进入区块的交易。它确保获准进入交易池的交易严格遵守要求的规则以及大多数矿工提出的更为严格的过滤原则（“标准”交易）。
+btcd是一个Go语言开发的完全节点比特币工具。目前，它的下载、验证、服务区块链的规则与参考实现bitcoind接受区块的规则完全一致（甚至bug也一致）。它同样正确中转新挖出的区块，维护一个交易池，转发尚未进入区块的交易。它确保获准进入交易池的交易严格遵守通用规则以及大多数矿工提出的更为严格的过滤原则（“标准”交易）。
 
-btcd和bitcoind间最主要的一个区别在于，btcd没有钱包功能，这是btcd的一个故意的设计决定。这意味着，你无法直接使用btcd发送或接收支付款项。钱包功能由btcwallet和btcgui提供，这两个软件都出于积极开发中。其他比较显著的区别包括：btcd同时支持HTTP POST请求（bitcoind也支持）和默认的Websocket连接，实际上，btcd的RPC连接是默认启用TLS的（译者：TLS，安全传输层协议，用于在两个通信应用程序之间提供保密性和数据完整性）。
+btcd和bitcoind间最主要的一个区别在于，btcd没有钱包功能，这是btcd的一个故意的设计选择。这意味着，你无法直接使用btcd发送或接收支付款项。钱包功能由btcwallet和btcgui提供，这两个软件都处于积极开发中。其他比较显著的区别还包括：btcd同时支持HTTP POST请求（bitcoind也支持）和默认的Websocket连接，实际上，btcd的RPC连接是默认启用TLS的（译者：TLS，安全传输层协议，用于在两个通信应用程序之间提供保密性和数据完整性）。
 
-###安装btcd
+### 安装btcd
 
 要在Windows下安装btcd，需要从GitHub（https://github.com/conformal/btcd/releases）上下载msi安装包，并进行安装；如果是Linux系统，假设你已安装了Go语言：
 
@@ -1022,13 +1022,13 @@ btcd和bitcoind间最主要的一个区别在于，btcd没有钱包功能，这�
 
 	$ go get -u -v github.com/conformal/btcd/...
 
-###控制btcd
+### 控制btcd
 
 btcd有一系列配置选项，你可以通过以下命令查看：
 
 	$ btcd --help
 
-btcd安装时随带了一些好东西，比如btctl，这是一个命令行工具，可以用于通过RPC控制或查询btcd。btcd默认没有启用其RPC服务；你至少需要在下面的配置文件中配置好RPC的用户名和密码：
+btcd安装时随带了一些好东西，比如btctl，这是一个命令行工具，可以用于通过RPC控制或查询btcd。btcd默认没有启用其RPC服务，要启动该服务，你至少需要在文件*btcd.conf*和btctl.conf*中配置好RPC的用户名和密码：
 
 * *btcd.conf*
 
@@ -1046,11 +1046,11 @@ btcd安装时随带了一些好东西，比如btctl，这是一个命令行工�
 
 	rpcpass=SomeDecentp4ssw0rd
 
-或者如你你想通过命令覆盖配置文件，可以采用以下方式：
+或者你也可以通过命令来覆盖配置文件，命令如下：
 
 	$ btcd -u myuser -P SomeDecentp4ssw0rd
 	$ btcctl -u myuser -P SomeDecentp4ssw0rd
 
-以下命令列出所有可用选项：
+要获取可用选项的列表，可以运行以下命令：
 
 	$ btcctl --help
