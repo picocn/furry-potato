@@ -4,7 +4,7 @@ pycoin，ku和tx
 **pycoin**库最初是由理查德.吉斯（Richard Kiss）编写并维护的，是一个基于Python的库，支持比特币密钥和交易的操作，由于对脚本语言的支持很好，它甚至可以正确处理非标准交易。
 pycoin库支持Python2（2.7.x）和Python3（3.3以上版本），随库附带了一些好用的命令行工具，如ku和tx。
 
-# 实用密钥工具（Key Utility，KU）
+## 实用密钥工具（Key Utility，KU）
 
 命令行工具ku（“key utility”）是一把操作密钥的瑞士军刀。它支持BIP32密钥，WIF和地址（比特币地址或竞争币地址）。以下是一些范例。
 
@@ -256,7 +256,7 @@ WIF：
     hash160          : 751e76e8199196d454941c45d1b3a323f1433bd6
     Dogecoin address : DFpN6QqFfUm3gKNaxN6tNcab1FArL9cZLE
 
-# 使用交易工具（Transaction Utility，TX）
+## 使用交易工具（Transaction Utility，TX）
 
 命令行工具tx可以以人类可读的形式显示交易信息，从pycoin的交易缓存或web服务（blockchain.info, blockr.io, biteasy.com当前都支持）获取原始交易，合并交易，添加或删除输入或输出，对交易进行签名。
 下面是一些例子。
